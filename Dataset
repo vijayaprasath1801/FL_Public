@@ -63,3 +63,8 @@ value:'purge'}]
           {item.paymentsCount}
         </span>
       ),
+
+
+  rowClassName={({ item }: any) =>
+    item.status === Status.PENDING ? "highlight-pending-row" : ""
+  }
