@@ -41,3 +41,25 @@ value:'purge'}] :
 [{label:'Purge', 
 value:'purge'}]
 }
+
+
+    formatter: ({ item }: any) => (
+        <span
+          style={{
+            color: item.status === Status.PENDING ? "yellow" : "inherit",
+          }}
+        >
+          {moment(item?.harvestedDate).format("YYYY/MM/DD LT")}
+        </span>
+      ),
+
+
+     formatter: ({ item }: any) => (
+        <span
+          style={{
+            color: item.status === Status.PENDING ? "yellow" : "inherit",
+          }}
+        >
+          {item.paymentsCount}
+        </span>
+      ),
