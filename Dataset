@@ -4,3 +4,30 @@ enum Status {
   COMPLETED = "COMPLETED",
   PENDING = "PENDING",
 }
+
+
+       <MenuButton
+          width={200}
+          label="Actions"
+          kind="standard"
+          selectedValue=""
+          role="menu"
+          onSelectedValueChange={(value: string) => handleActionValueChange(value, item)}
+        >
+          {item.paymentsCount === 0 ? (
+            <>
+              <MenuItem role="menuItem" value="purge">
+                Delete/Purge
+              </MenuItem>
+            </>
+          ) : (
+            <>
+              <MenuItem role="menuItem" value="run">
+                Schedule a Run
+              </MenuItem>
+              <MenuItem role="menuItem" value="purge">
+                Purge
+              </MenuItem>
+            </>
+          )}
+        </MenuButton>
