@@ -68,3 +68,9 @@ value:'purge'}]
   rowClassName={({ item }: any) =>
     item.status === Status.PENDING ? "highlight-pending-row" : ""
   }
+
+.highlight-pending-row {
+  background-color: #fff3cd; /* Light yellow */
+  color: #856404; /* Brownish text */
+}
+
