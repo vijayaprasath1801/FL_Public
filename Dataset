@@ -31,3 +31,13 @@ enum Status {
             </>
           )}
         </MenuButton>
+
+export const actionOptions = (count) =>{
+return count !== 0 ? [
+{label:'Schedule a run',
+value:'run'},
+{label:'Purge', 
+value:'purge'}] :
+[{label:'Purge', 
+value:'purge'}]
+}
