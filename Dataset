@@ -94,3 +94,10 @@ value:'purge'}]
       if (result?.payload?.status === 'success') {
         setOpenPopup(true); // Show popup immediately
       }
+
+
+ keepUnusedDataFor: 5,
+  refetchOnFocus: true, // Re-fetch when the window regains focus
+  refetchOnReconnect: true,
+ refetchOnMountOrArgChange: true,
+ pollingInterval: 5000,
