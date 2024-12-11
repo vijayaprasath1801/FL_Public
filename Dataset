@@ -89,3 +89,8 @@ value:'purge'}]
  finally {
     formSubmitting.current = false; // Unlock form submission
   }
+
+    const result = await dispatch(uploadPaymentDatasetAction(formData));
+      if (result?.payload?.status === 'success') {
+        setOpenPopup(true); // Show popup immediately
+      }
