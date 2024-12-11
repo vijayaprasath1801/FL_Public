@@ -101,3 +101,17 @@ value:'purge'}]
   refetchOnReconnect: true,
  refetchOnMountOrArgChange: true,
  pollingInterval: 5000,
+
+
+ useEffect(() => {
+    // Dispatch initial fetch
+    dispatch(fetchAllPaymentDatasetAction());
+
+    // Set up polling for auto-refresh
+    const interval = setInterval(() => {
+      dispatch(fetchAllPaymentDatasetAction());
+    }, 5000); // Adjust the interval as needed, e.g., 5000ms for 5 seconds
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, [dispatch]);
