@@ -78,3 +78,14 @@ value:'purge'}]
       ? "highlight-pending-row"
       : ""
   }
+
+
+  if (formSubmitting.current) {
+    return; // Prevent duplicate submissions
+  }
+
+  formSubmitting.current = true; // Lock form submission
+
+ finally {
+    formSubmitting.current = false; // Unlock form submission
+  }
