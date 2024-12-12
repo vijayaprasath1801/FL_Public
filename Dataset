@@ -183,3 +183,79 @@ const handleFormChange = (name, value) => {
             return null; // No error
         },
     ]}
+
+
+
+import { render, screen } from '@testing-library/react';
+import PaginatedTable from './PaginatedTable'; // Replace with the correct path
+
+test('renders spinner in paymentsCount column when status is PENDING', () => {
+  const pendingMockData = {
+    items: [
+      {
+        datasetName: "test1",
+        activeRunId: "123",
+        status: "PENDING",
+        harvestedDate: "11-02-2024",
+        paymentsCount: "5",
+      },
+    ],
+    totalItems: 1,
+    pageNumber: 1,
+    itemsPerPage: 10,
+  };
+
+  const mockColumns = [
+    { key: "datasetName", label: "Dataset Name", align: "left" },
+    { key: "harvestedDate", label: "Harvested Date", align: "left" },
+    {
+      key: "paymentsCount",
+      label: "No. of Payments",
+      align: "left",
+      formatter: (item) => (
+        <span
+          style={{
+            color: item.status === "PENDING" ? "#FFA500" : "inherit",
+          }}
+        >
+          {item.status === "PENDING" ? (
+            <ProgressSpinner data-testid="paymentSpinner" size="s" />
+          ) : (
+            item.paymentsCount
+          )}
+        </span>
+      ),
+    },
+  ];
+
+  render(
+    <PaginatedTable
+      loading={false}
+      tableColumns={mockColumns}
+      data={pendingMockData}
+      pageNumber={1}
+      sortColumns={[]}
+      itemsPerPage={10}
+      rowKey="activeRunId"
+      onPagination={jest.fn()}
+      highLightRow={true}
+      highLightEntries={{
+        key: "status",
+        value: "PENDING",
+      }}
+    />
+  );
+
+
+  const paymentSpinner = screen.getByTestId('paymentSpinner');
+  expect(paymentSpinner).toBeInTheDocument();
+
+
+  const paymentText = screen.queryByText('5');
+  expect(paymentText).not.toBeInTheDocument();
+
+
+  const harvestedDateText = screen.queryByText("11-02-2024");
+  expect(harvestedDateText).not.toBeInTheDocument();
+});
+
