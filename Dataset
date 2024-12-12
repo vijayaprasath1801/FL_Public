@@ -260,3 +260,4 @@ test('renders spinner in paymentsCount column when status is PENDING', () => {
 });
 
  expect(paymentSpinners.length).toBeGreaterThan(0);
+SHMX-2376 - Loaders for payment and date harvested tablecell and start and end date validation
