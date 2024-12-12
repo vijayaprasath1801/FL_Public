@@ -115,3 +115,53 @@ value:'purge'}]
     // Clear interval on component unmount
     return () => clearInterval(interval);
   }, [dispatch]);
+
+
+
+const [endDateMaxSelectableDate, setEndDateMaxSelectableDate] = useState(null);
+const [startDateMinSelectableDate, setStartDateMinSelectableDate] = useState(null);
+
+const handleFormChange = (name, value) => {
+  if (name === 'startDate') {
+    setFormData({ ...formData, startDate: value });
+    // Update the maxSelectableDate for the end date
+    setEndDateMaxSelectableDate(new Date(value));
+  } else if (name === 'endDate') {
+    setFormData({ ...formData, endDate: value });
+    // Update the minSelectableDate for the start date
+    setStartDateMinSelectableDate(new Date(value));
+  }
+};
+
+<DatePicker
+  required
+  label="Start Date"
+  name="startDate"
+  value={formData.startDate}
+  disableWeekends={true}
+  onValueChange={handleFormChange}
+  maxSelectableDate={endDateMaxSelectableDate}
+  customStrings={{
+    dateCannotBeAfter: (customDayAfter) => `Date cannot be after ${customDayAfter}`,
+  }}
+  disabledDates={{
+    after: endDateMaxSelectableDate,
+  }}
+/>
+
+<DatePicker
+  required
+  label="End Date"
+  name="endDate"
+  minSelectableDate={startDateMinSelectableDate}
+  disableWeekends={true}
+  value={formData.endDate}
+  fromMonth={formData.startDate}
+  customStrings={{
+    dateCannotBeBefore: (customDayBefore) => `Date cannot be before ${customDayBefore}`,
+  }}
+  onValueChange={handleFormChange }
+  disabledDates={{
+    before: startDateMinSelectableDate,
+  }}
+/>
