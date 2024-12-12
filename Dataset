@@ -165,3 +165,21 @@ const handleFormChange = (name, value) => {
     before: startDateMinSelectableDate,
   }}
 />
+
+
+
+    customValidators={[
+        (value) => {
+            const parsedValue = parseInt(value, 10);
+            if (isNaN(parsedValue)) {
+                return 'Please enter a valid number.';
+            }
+            if (value.length > 2) {
+                return 'Input cannot exceed 2 digits.';
+            }
+            if (parsedValue < 0 || parsedValue > 23) {
+                return 'Allowed Values are: 00-23';
+            }
+            return null; // No error
+        },
+    ]}
