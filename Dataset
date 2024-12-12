@@ -259,3 +259,4 @@ test('renders spinner in paymentsCount column when status is PENDING', () => {
   expect(harvestedDateText).not.toBeInTheDocument();
 });
 
+ expect(paymentSpinners.length).toBeGreaterThan(0);
