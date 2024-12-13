@@ -313,3 +313,65 @@ formatter: (item) => {
     return "-"; // Default case
   }
 };
+
+
+
+import { useEffect, useState } from "react";
+
+const PollingComponent = ({ item, fetchApi, onUpdate }) => {
+  const [polling, setPolling] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    if (!item.datasetId || !polling) return;
+
+    const intervalId = setInterval(async () => {
+      try {
+        const updatedData = await fetchApi(item.datasetId);
+        if (updatedData) {
+          setData(updatedData);
+          onUpdate(updatedData);
+
+          if (
+            updatedData.status !== "PENDING" &&
+            updatedData.status !== "PROCESSING"
+          ) {
+            setPolling(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error while polling API:", error);
+      }
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [item.datasetId, polling, fetchApi, onUpdate]);
+
+  const displayValue = data
+    ? data.status === "PENDING" || data.status === "PROCESSING"
+      ? "-"
+      : data.paymentsCount
+    : "-"; // Show '-' if no data or status is PENDING/PROCESSING
+
+  return <span>{displayValue}</span>;
+};
+
+export default PollingComponent;
+
+
+
+  const fetchApi = async (id) => {
+    const response = await fetch(`/api/payment-dataset/${id}`); // Example API
+    const data = await response.json();
+    return data;
+  };
+
+  const handleRowUpdate = (updatedRow) => {
+    setPaymentDatasetData((prevData) =>
+      prevData.map((row) =>
+        row.id === updatedRow.id ? { ...row, ...updatedRow } : row
+      )
+    );
+  };
+
+
