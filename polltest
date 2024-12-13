@@ -125,3 +125,13 @@ describe('PollingComponent', () => {
     jest.useRealTimers();
   });
 });
+
+
+    const updatedState = store.getState()[PAYMENT_DATASET_FEATURE_KEY];
+
+    // Verify the status of the updated item in the store
+    const updatedItem = updatedState.data.find(
+      (item) => item.id === "675b1a7d1d8bd25f28b4e90e"
+    );
+
+    expect(updatedItem.status).toBe("COMPLETED");
