@@ -374,4 +374,9 @@ export default PollingComponent;
     );
   };
 
-
+ <PollingComponent
+       
+            datasetId={item}
+            fetchApi={fetchApi}
+            onUpdate={handleRowUpdate}
+          />
