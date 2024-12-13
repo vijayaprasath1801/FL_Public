@@ -432,3 +432,20 @@ const PollingComponent = ({ items, fetchApi, onUpdate }) => {
 
 export default PollingComponent;
 
+
+.addCase(fetchPaymentDatasetActionUpdatePending.fulfilled, (state, { payload }) => {
+  const { datasetId, ...updatedData } = payload;
+
+  // Find the index of the item to update
+  const index = state.data.items.findIndex((item) => item.datasetId === datasetId);
+
+  if (index !== -1) {
+    // Update the item in the array
+    state.data.items[index] = {
+      ...state.data.items[index], // Preserve existing properties
+      ...updatedData, // Merge updated data
+    };
+  }
+});
+
+
