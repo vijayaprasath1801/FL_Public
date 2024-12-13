@@ -261,3 +261,21 @@ test('renders spinner in paymentsCount column when status is PENDING', () => {
 
  expect(paymentSpinners.length).toBeGreaterThan(0);
 SHMX-2376 - Loaders for payment and date harvested tablecell and start and end date validation
+
+
+      if (
+        formData.startDate === formData.endDate &&
+        parsedValue < parseInt(formData.startTimeHours || "0", 10)
+      ) {
+        return "End time hour must be later than start time hour.";
+      }
+
+
+    if (
+        formData.startDate === formData.endDate &&
+        parseInt(formData.endTimeHours || "0", 10) ===
+          parseInt(formData.startTimeHours || "0", 10) &&
+        parsedValue <= parseInt(formData.startTimeMinutes || "0", 10)
+      ) {
+        return "End time minute must be later than start time minute.";
+      }
