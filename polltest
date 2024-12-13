@@ -1,0 +1,127 @@
+import React from 'react';
+import { render, screen, act } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { fetchPaymentDatasetActionUpdatePending } from '../../actions/paymentdataset.actions';
+import PollingComponent from '../PollingComponent'; // Adjust the path based on your file structure
+
+// Mock store and actions
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
+jest.mock('../../actions/paymentdataset.actions', () => ({
+  fetchPaymentDatasetActionUpdatePending: jest.fn(),
+}));
+
+describe('PollingComponent', () => {
+  let store;
+  const mockDispatch = jest.fn();
+  const initialState = {
+    paymentDataset: {
+      items: [
+        { id: '1', status: 'PROCESSING' },
+        { id: '2', status: 'PENDING' },
+        { id: '3', status: 'COMPLETED' },
+      ],
+    },
+  };
+
+  beforeEach(() => {
+    store = mockStore(initialState);
+    store.dispatch = mockDispatch;
+    jest.clearAllMocks();
+  });
+
+  it('should initialize with pending items filtered from paymentDatasetData', () => {
+    render(
+      <Provider store={store}>
+        <PollingComponent paymentDatasetData={initialState.paymentDataset} />
+      </Provider>
+    );
+
+    // Check if the initial pending items are correctly set
+    expect(screen.queryByText('pending')).toBeTruthy();
+  });
+
+  it('should dispatch fetchPaymentDatasetActionUpdatePending for pending items on interval', async () => {
+    const mockPayload = { id: '1', status: 'PROCESSING' };
+    fetchPaymentDatasetActionUpdatePending.mockResolvedValueOnce({
+      payload: mockPayload,
+    });
+
+    jest.useFakeTimers();
+
+    render(
+      <Provider store={store}>
+        <PollingComponent paymentDatasetData={initialState.paymentDataset} />
+      </Provider>
+    );
+
+    // Fast-forward the timers to simulate the interval
+    await act(async () => {
+      jest.advanceTimersByTime(3000);
+    });
+
+    // Check if the action is dispatched for each pending item
+    expect(mockDispatch).toHaveBeenCalledTimes(2); // Two pending items
+    expect(fetchPaymentDatasetActionUpdatePending).toHaveBeenCalledWith({ id: '1' });
+    expect(fetchPaymentDatasetActionUpdatePending).toHaveBeenCalledWith({ id: '2' });
+
+    jest.useRealTimers();
+  });
+
+  it('should stop polling when no pending items remain', async () => {
+    fetchPaymentDatasetActionUpdatePending.mockResolvedValueOnce({
+      payload: { id: '1', status: 'COMPLETED' },
+    });
+
+    jest.useFakeTimers();
+
+    render(
+      <Provider store={store}>
+        <PollingComponent paymentDatasetData={initialState.paymentDataset} />
+      </Provider>
+    );
+
+    // Fast-forward the timers to simulate the interval
+    await act(async () => {
+      jest.advanceTimersByTime(3000);
+    });
+
+    // Verify no more actions are dispatched
+    expect(mockDispatch).toHaveBeenCalledTimes(2); // Initial pending items
+    expect(fetchPaymentDatasetActionUpdatePending).toHaveBeenCalledWith({ id: '1' });
+    expect(fetchPaymentDatasetActionUpdatePending).toHaveBeenCalledWith({ id: '2' });
+
+    jest.advanceTimersByTime(3000);
+
+    // Polling should have stopped
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+
+    jest.useRealTimers();
+  });
+
+  it('should handle API errors gracefully', async () => {
+    fetchPaymentDatasetActionUpdatePending.mockRejectedValueOnce(new Error('API Error'));
+
+    jest.useFakeTimers();
+
+    render(
+      <Provider store={store}>
+        <PollingComponent paymentDatasetData={initialState.paymentDataset} />
+      </Provider>
+    );
+
+    // Fast-forward the timers to simulate the interval
+    await act(async () => {
+      jest.advanceTimersByTime(3000);
+    });
+
+    // Ensure errors do not break the polling logic
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(fetchPaymentDatasetActionUpdatePending).toHaveBeenCalledWith({ id: '1' });
+    expect(fetchPaymentDatasetActionUpdatePending).toHaveBeenCalledWith({ id: '2' });
+
+    jest.useRealTimers();
+  });
+});
