@@ -380,3 +380,55 @@ export default PollingComponent;
             fetchApi={fetchApi}
             onUpdate={handleRowUpdate}
           />
+
+
+import { useEffect, useState } from "react";
+
+const PollingComponent = ({ items, fetchApi, onUpdate }) => {
+  const [pendingItems, setPendingItems] = useState([]);
+
+  useEffect(() => {
+    // Identify pending items initially
+    const initialPending = items.filter(
+      (item) => item.status === "PENDING" || item.status === "PROCESSING"
+    ).map((item) => item.datasetId);
+    setPendingItems(initialPending);
+  }, [items]);
+
+  useEffect(() => {
+    if (pendingItems.length === 0) return;
+
+    const intervalId = setInterval(async () => {
+      try {
+        const updatedStatuses = await Promise.all(
+          pendingItems.map((id) => fetchApi(id))
+        );
+
+        const updatedPending = [];
+        updatedStatuses.forEach((updatedData) => {
+          if (updatedData.status === "PENDING" || updatedData.status === "PROCESSING") {
+            updatedPending.push(updatedData.datasetId);
+          } else {
+            onUpdate(updatedData); // Notify parent of updated data
+          }
+        });
+
+        setPendingItems(updatedPending);
+
+        // Stop polling if all items are completed
+        if (updatedPending.length === 0) {
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        console.error("Error while polling API:", error);
+      }
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [pendingItems, fetchApi, onUpdate]);
+
+  return null; // Component does not render UI directly
+};
+
+export default PollingComponent;
+
