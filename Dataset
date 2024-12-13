@@ -296,3 +296,20 @@ SHMX-2376 - Loaders for payment and date harvested tablecell and start and end d
       event.preventDefault(); // Prevent additional input if the limit is reached
     }
   }}
+formatter: (item) => {
+  if (item.status === "FAILED") {
+    return (
+      <span>
+        <IconError color="red" /> {/* Replace IconError with your desired icon */}
+      </span>
+    );
+  } else if (item.status === "COMPLETED" && item.payment === 0) {
+    return (
+      <span>
+        <IconNoPayment color="blue" /> {/* Replace IconNoPayment with your desired icon */}
+      </span>
+    );
+  } else {
+    return "-"; // Default case
+  }
+};
