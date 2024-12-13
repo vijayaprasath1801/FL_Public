@@ -519,3 +519,19 @@ const statuses = {
   'PENDING',
  'PROCESSING',
 };
+
+
+const statuses = {
+  KEYS: {
+    ERROR: 'ERROR',
+    COMPLETED: 'COMPLETED',
+    PENDING: 'PENDING',
+    PROCESSING: 'PROCESSING',
+  },
+  VALUES: {
+    ERROR: 'FAILED',
+    COMPLETED: 'COMPLETED',
+    PENDING: 'PENDING',
+    PROCESSING: 'PROCESSING',
+  },
+};
