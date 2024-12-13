@@ -448,4 +448,59 @@ export default PollingComponent;
   }
 });
 
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPaymentDatasetActionUpdatePending } from "../redux/actions/paymentDatasetActions";
+
+const PollingComponent = () => {
+  const [pendingItems, setPendingItems] = useState([]);
+  const dispatch = useDispatch();
+  const paymentSetData = useSelector((state) => state.payment.paymentSetData);
+
+  useEffect(() => {
+    // Identify pending items initially
+    const initialPending = paymentSetData
+      .filter((item) => item.status === "PROCESSING" || item.status === "PENDING")
+      .map((item) => item.datasetId);
+    setPendingItems(initialPending);
+  }, [paymentSetData]);
+
+  useEffect(() => {
+    if (pendingItems.length === 0) return;
+
+    const intervalId = setInterval(async () => {
+      try {
+        const updatedStatuses = await Promise.all(
+          pendingItems.map((id) =>
+            dispatch(fetchPaymentDatasetActionUpdatePending({ id }))
+          )
+        );
+
+        const updatedPending = [];
+        updatedStatuses.forEach((updatedData) => {
+          if (
+            updatedData.status === "PENDING" ||
+            updatedData.status === "PROCESSING"
+          ) {
+            updatedPending.push(updatedData.datasetId);
+          }
+        });
+        setPendingItems(updatedPending);
+
+        // Stop polling if all items are completed
+        if (updatedPending.length === 0) {
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        console.error("Error while polling:", error);
+      }
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [pendingItems, dispatch]);
+
+  return null; // This component does not render UI, only handles updates
+};
+
+export default PollingComponent;
 
