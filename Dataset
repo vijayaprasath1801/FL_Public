@@ -535,3 +535,14 @@ const statuses = {
     PROCESSING: 'PROCESSING',
   },
 };
+
+const tableCellValueRender = ({ compare, value }) => { 
+  const isPendingOrProcessing = [statuses.KEYS.PENDING, statuses.KEYS.PROCESSING ,statuses.KEYS.FAILED ].includes(compare);
+
+  return (
+    <div>
+      {isPendingOrProcessing ? '-' : value}
+    </div>
+  );
+}
+
