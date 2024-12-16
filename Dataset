@@ -546,3 +546,36 @@ const tableCellValueRender = ({ compare, value }) => {
   );
 }
 
+
+const validateTimeInput = ({
+  value,
+  rangeStart = 0,
+  rangeEnd = 23,
+  startTime,
+  endTime,
+  errorMessages = {
+    invalidNumber: "Enter a valid number.",
+    exceedDigits: "Cannot exceed 2 digits.",
+    outOfRange: `Allowed Values are: ${rangeStart}-${rangeEnd}.`,
+    invalidTimeOrder: "End time hour must be later than start time hour.",
+  },
+}) => {
+  const parsedValue = parseInt(value, 10);
+
+  if (isNaN(parsedValue)) {
+    return errorMessages.invalidNumber;
+  }
+  if (value.length > 2) {
+    return errorMessages.exceedDigits;
+  }
+  if (parsedValue < rangeStart || parsedValue > rangeEnd) {
+    return errorMessages.outOfRange;
+  }
+  if (startTime !== undefined && endTime !== undefined && parsedValue < parseInt(startTime, 10)) {
+    return errorMessages.invalidTimeOrder;
+  }
+
+  return null; // Valid input
+};
+
+
