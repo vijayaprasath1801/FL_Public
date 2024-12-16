@@ -568,5 +568,25 @@ const validateTimeInput = (value, type, startTime, formData) => {
   return null; 
 };
 
+   const intervalId = setInterval(async () => {
+      try {
+        const updatedPending = [];
+        for (const id of pendingItems) {
+          const updatedData = await dispatch(fetchPaymentDatasetActionUpdatePending({ id }));
 
+          if ([statuses.KEYS.PENDING, statuses.KEYS.PROCESSING].includes(updatedData.status)) {
+            updatedPending.push(updatedData.payload);
+          }
+        }
+        const pendingIds = updatedPending.map((item) => item.id) ?? [];
+        setPendingItems(pendingIds);
+        if (updatedPending.length === 0) {
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        console.error("Error while polling:", error);
+      }
+    }, 10000);
+
+    return () => clearInterval(intervalId);
 
