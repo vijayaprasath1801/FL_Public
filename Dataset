@@ -547,35 +547,26 @@ const tableCellValueRender = ({ compare, value }) => {
 }
 
 
-const validateTimeInput = ({
-  value,
-  rangeStart = 0,
-  rangeEnd = 23,
-  startTime,
-  endTime,
-  errorMessages = {
-    invalidNumber: "Enter a valid number.",
-    exceedDigits: "Cannot exceed 2 digits.",
-    outOfRange: `Allowed Values are: ${rangeStart}-${rangeEnd}.`,
-    invalidTimeOrder: "End time hour must be later than start time hour.",
-  },
-}) => {
+const validateTimeInput = (value, type, startTime, formData) => {
   const parsedValue = parseInt(value, 10);
-
+  const isEndTime = type === 'end';
   if (isNaN(parsedValue)) {
-    return errorMessages.invalidNumber;
+    return "Enter a valid number.";
   }
   if (value.length > 2) {
-    return errorMessages.exceedDigits;
+    return "Cannot exceed 2 digits.";
   }
-  if (parsedValue < rangeStart || parsedValue > rangeEnd) {
-    return errorMessages.outOfRange;
+  if (parsedValue < 0 || parsedValue > 23) {
+    return "Allowed values are: 00-23.";
   }
-  if (startTime !== undefined && endTime !== undefined && parsedValue < parseInt(startTime, 10)) {
-    return errorMessages.invalidTimeOrder;
+  if (isEndTime && formData.startDate && formData.endDate) {
+    const startTimeHours = parseInt(startTime || "0", 10);
+    if (parsedValue < startTimeHours) {
+      return "End time hour must be later than start time hour.";
+    }
   }
-
-  return null; // Valid input
+  return null; 
 };
+
 
 
