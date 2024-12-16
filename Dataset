@@ -597,3 +597,9 @@ const validateTimeInput = (value, type, startTime, formData) => {
             draft[index] = { ...draft[index], ...updatedData };
           });
         }
+
+  if (index !== -1) {
+    state.data.items = state.data.items.map((item, i) =>
+      i === index ? { ...item, ...updatedData } : item
+    );
+  }
