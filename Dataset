@@ -623,3 +623,27 @@ if (index !== -1) {
   };
 }
 return state;
+
+
+
+if (isEndTime) {
+  const startHours = parseInt(data.startTimeHours || "0", 10);
+  const startMinutes = parseInt(data.startTimeMinutes || "0", 10);
+  const endHours = parseInt(data.endTimeHours || "0", 10);
+  const endMinutes = parseInt(data.endTimeMinutes || "0", 10);
+
+  // If end hour is earlier than start hour
+  if (data.startDate && data.endDate && endHours < startHours) {
+    return "End time hour must be later than start time hour.";
+  }
+
+  // If end hour is the same as start hour but minutes are not greater
+  if (
+    data.startDate &&
+    data.endDate &&
+    endHours === startHours &&
+    endMinutes <= startMinutes
+  ) {
+    return "End time minute must be later than start time minute.";
+  }
+}
