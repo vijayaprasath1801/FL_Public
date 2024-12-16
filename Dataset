@@ -590,3 +590,10 @@ const validateTimeInput = (value, type, startTime, formData) => {
 
     return () => clearInterval(intervalId);
 
+
+   if (index !== -1) {
+          // Use immer to produce the new state
+          state.data.items = produce(state.data.items, draft => {
+            draft[index] = { ...draft[index], ...updatedData };
+          });
+        }
