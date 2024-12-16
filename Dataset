@@ -603,3 +603,23 @@ const validateTimeInput = (value, type, startTime, formData) => {
       i === index ? { ...item, ...updatedData } : item
     );
   }
+
+const index = state.data.items.findIndex((item) => item.datasetId === datasetId);
+if (index !== -1) {
+  const updatedItems = [
+    ...state.data.items.slice(0, index),
+    {
+      ...state.data.items[index],
+      ...updatedData, // Merge updated data
+    },
+    ...state.data.items.slice(index + 1), 
+  ];
+  return {
+    ...state,
+    data: {
+      ...state.data,
+      items: updatedItems,
+    },
+  };
+}
+return state;
