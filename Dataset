@@ -713,3 +713,16 @@ export default PollingComponent;
         return "Start time minute cannot be later than end time minute.";
       }
     }
+
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+   if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+finally {
+      setIsSubmitting(false);
+    }
+
+  disabled={isSubmitting}
