@@ -1,1 +1,42 @@
 
+const PollingComponent = ({ paymentDataset }) => {
+  const dispatch = useDispatch();
+  const items = useSelector((state: any) => state.paymentDatasetState.items);
+
+  const WAIT_FOR = 30000; 
+
+  useEffect(() => {
+    let timeoutId = null;
+
+    const poll = async () => {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, WAIT_FOR));
+        const response = await getPaymentDatasetAPI(paymentDataset.id);
+
+        if (response) {
+          const updatedItems = items.map((item: any) =>
+            item.id === response.id ? response : item
+          );
+          dispatch(updateItemsAction(updatedItems));
+          if ([COMPLETED, FAILURE].includes(response.status)) {
+            console.log("Polling stopped: Status is terminal");
+            if (timeoutId) clearTimeout(timeoutId);
+            return;
+          }
+        }
+        timeoutId = setTimeout(poll, WAIT_FOR);
+      } catch (error) {
+        console.error("Polling error:", error);
+        if (timeoutId) clearTimeout(timeoutId);
+      }
+    };
+
+    if (![COMPLETED, FAILURE].includes(paymentDataset.status)) {
+      poll();
+    }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [dispatch, items, paymentDataset]);
+
+};
