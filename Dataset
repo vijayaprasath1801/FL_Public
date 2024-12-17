@@ -692,3 +692,24 @@ const PollingComponent = ({ data }) => {
 };
 
 export default PollingComponent;
+
+
+
+    if (isEndTime) {
+      if (endHours < startHours) {
+        return "End time hour must be later than or equal to start time hour.";
+      }
+      if (endHours === startHours && endMinutes < startMinutes) {
+        return "End time minute must be later than start time minute.";
+      }
+    }
+
+    // If validating start time
+    if (!isEndTime) {
+      if (endHours < startHours) {
+        return "Start time hour cannot be later than end time hour.";
+      }
+      if (endHours === startHours && startMinutes > endMinutes) {
+        return "Start time minute cannot be later than end time minute.";
+      }
+    }
