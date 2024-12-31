@@ -1,0 +1,4 @@
+setFormData(Object.keys(formData).reduce((acc, key) => {
+  acc[key] = ""; // Reset each field to empty string
+  return acc;
+}, {}));
