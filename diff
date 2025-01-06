@@ -1,0 +1,61 @@
+import React from 'react';
+import ReactDiffViewer from 'react-diff-viewer';
+
+const oldCode = `
+const a = 10;
+const b = 10;
+const c = () => console.log('foo');
+
+if (a > 10) {
+  console.log('bar');
+}
+
+console.log('done');
+`;
+
+const newCode = `
+const a = 10;
+const boo = 10;
+
+if (a === 10) {
+  console.log('bar');
+}
+`;
+
+const customStyles = {
+  variables: {
+    light: {
+      addedBackground: '#e6ffed',
+      removedBackground: '#ffeef0',
+      addedColor: '#256029',
+      removedColor: '#8b0000',
+      highlightBackground: '#fefed5',
+      highlightGutterBackground: '#ffcd3c',
+    },
+  },
+  diffAdded: {
+    background: '#d4f8d4',
+  },
+  diffRemoved: {
+    background: '#f8d4d4',
+  },
+  line: {
+    padding: '10px 2px',
+    '&:hover': {
+      background: '#e8e8e8',
+    },
+  },
+};
+
+const DiffViewer = () => {
+  return (
+    <ReactDiffViewer
+      oldValue={oldCode}
+      newValue={newCode}
+      splitView={true}
+      styles={customStyles}
+    />
+  );
+};
+
+export default DiffViewer;
