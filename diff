@@ -69,3 +69,11 @@ DiffMethod {
   SENTENCES = "diffSentences",
   CSS = "diffCss"
 }
+
+  const highlightColors = {
+    1: '#a8e9c0', // Green
+    2: '#f3a683', // Orange
+    3: '#f78fb3', // Pink
+    4: '#63cdda', // Blue
+    5: '#786fa6', // Purple
+  };
