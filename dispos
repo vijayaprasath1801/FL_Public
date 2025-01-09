@@ -1,97 +1,69 @@
-export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLevel) => {
+export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLevel = 0) => {
   if (!xmlDoc) {
     return null;
   }
 
   const INDENT_TIMES = 6;
-  const tag = xmlDoc.documentElement.tagName;
-  const regExp = new RegExp(`(${tag}\\[(.+)\\]\\/)`, 'g');
 
-  const bgColors = {
-    "bothHighlight": "#f3e79b", // Yellow for 1 1
-    "leftHighlight": "#a8e9c0", // Green for 1 0
-    "rightHighlight": "#f9b4ab", // Red for 0 1
-    "transparent": "transparent" // Default
+  const highlightColors = {
+    1: '#a8e9c0', // Green: Right has it, left doesn't (0 1)
+    2: '#f3a683', // Orange: Left has it, right doesn't (1 0)
+    3: '#f78fb3', // Pink: Both have it, but they differ (1 1)
   };
 
   const walk = (node, level) => {
-    let text = "\u00a0";
-    const indent = text.repeat(level * INDENT_TIMES);
+    const indent = ' '.repeat(level * INDENT_TIMES);
     let isDiffExist = false;
+    let highlightColor = 'transparent'; // Default color
     const xpathVal = getXPath(node);
 
-    let highlightColor = bgColors.transparent;
+    // Check for differences in the current node
+    for (let keyVal in differencesObj) {
+      const { expectedMessage, actualMessage, disposition } = differencesObj[keyVal] || {};
+      const nodePath = xpathVal.replace('/ns:RTPSMsg', '');
+      const diffNodePath = keyVal.replace(/\/ns:RTPSMsg/g, ''); // Updated regex for consistency
 
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      for (let keyVal in differencesObj) {
-        const key = keyVal.replace(regExp, '');
-        const nodeName = xpath.select(`/$(key)`, xmlDoc);
-        const innerValueLeft = differencesObj[keyVal].expectedMessage;
-        const innerValueRight = differencesObj[keyVal].actualMessage;
-        const diffExist = differencesObj[keyVal].doesTheDifferenceExist;
-        const disposition = differencesObj[keyVal].disposition;
-
-        const innerVal = side === 'left' ? innerValueLeft : innerValueRight;
-
-        for (let key in nodeName) {
-          const nodePath = xpathVal.replace('/ns:RTPSMsg', '');
-          const diffNodePath = keyVal.replace(regExp, '');
-
-          if (
-            diffExist &&
-            nodeName &&
-            node.nodeName === nodeName[key].tagName &&
-            node.childNodes[0]?.textContent.replace(/\s/g, "") === innerVal.replace(/\s/g, "") &&
-            nodePath === diffNodePath
-          ) {
-            isDiffExist = true;
-            
-            // Set the highlight color based on the disposition
-            if (disposition === 1) {
-              highlightColor = side === 'left' ? bgColors.leftHighlight : bgColors.rightHighlight;
-            } else if (disposition === 2) {
-              highlightColor = side === 'right' ? bgColors.leftHighlight : bgColors.rightHighlight;
-            } else if (disposition === 3) {
-              highlightColor = bgColors.bothHighlight;
-            }
-          }
+      if (nodePath === diffNodePath) {
+        if (
+          (side === 'left' && disposition === 2 && node.childNodes[0]?.textContent?.trim() === expectedMessage?.trim()) ||
+          (side === 'right' && disposition === 1 && node.childNodes[0]?.textContent?.trim() === actualMessage?.trim()) ||
+          (disposition === 3 &&
+            node.childNodes[0]?.textContent?.trim() ===
+              (side === 'left' ? expectedMessage : actualMessage)?.trim())
+        ) {
+          isDiffExist = true;
+          highlightColor = highlightColors[disposition] || 'transparent'; // Assign color based on disposition
+          break;
         }
       }
+    }
 
-      const children = Array.from(node.childNodes).map(child => walk(child, level + 1));
+    const children = Array.from(node.childNodes).map((child) => walk(child, level + 1));
 
+    if (node.nodeType === Node.ELEMENT_NODE) {
       return (
         <div
           className="tempDiv"
           style={{
-            display: "inline-block",
-            backgroundColor: highlightColor
+            display: 'inline-block',
+            backgroundColor: isDiffExist ? highlightColor : 'transparent',
           }}
         >
           <span>{`${indent}<${node.nodeName}>`}</span>
           {Array.from(node.attributes).map((attr, i) => (
-            <span key={i}>{` ${attr.name}="${attr.value}"`}</span>
+            <span key={i}>{`${attr.name}="${attr.value}"`}</span>
           ))}
-          <span>{">"}</span>
+          <span>{'>'}</span>
           {children.length > 0 && <br />}
           {children}
-          <span className="withBr">{`${indent}</${node.nodeName}>`}</span>
+          <span>{`${indent}</${node.nodeName}>`}</span>
         </div>
       );
     } else if (node.nodeType === Node.TEXT_NODE) {
-      const trimmedText = node.nodeValue.replace(/\s/g, "");
-
-      if (trimmedText) {
-        return (
-          <span className="noBr">
-            {indent}
-            {trimmedText}
-          </span>
-        );
-      }
-
-      return null;
+      const text = node.nodeValue?.trim();
+      return text ? <span>{text}</span> : null;
     }
+    return null;
   };
 
   return walk(xmlDoc.documentElement, indentLevel);
