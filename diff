@@ -174,3 +174,26 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
   return walk(xmlDoc.documentElement, indentLevel);
 };
+
+
+if (
+  nodePath === diffNodePath &&
+  (
+    // disposition === 2 (0 1) - left is blank, right should be highlighted
+    (side === 'left' && disposition === 2 && node.childNodes[0]?.textContent?.replace(/\s/g, '') === '') ||
+    (side === 'right' && disposition === 2 && node.childNodes[0]?.textContent?.replace(/\s/g, '') === actualMessage?.replace(/\s/g, '')) ||
+
+    // disposition === 1 (1 0) - left should be highlighted, right should be blank
+    (side === 'left' && disposition === 1 && node.childNodes[0]?.textContent?.replace(/\s/g, '') === expectedMessage?.replace(/\s/g, '')) ||
+    (side === 'right' && disposition === 1 && node.childNodes[0]?.textContent?.replace(/\s/g, '') === '') ||
+
+    // disposition === 3 (1 1) - both sides should be highlighted if they have different values
+    (disposition === 3 &&
+      ( 
+        (side === 'left' && node.childNodes[0]?.textContent?.replace(/\s/g, '') === expectedMessage?.replace(/\s/g, '')) ||
+        (side === 'right' && node.childNodes[0]?.textContent?.replace(/\s/g, '') === actualMessage?.replace(/\s/g, ''))
+      )
+    )
+  )
+)
+
