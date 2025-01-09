@@ -184,3 +184,74 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
   return walk(xmlDoc.documentElement, indentLevel);
 };
+
+
+export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLevel = 0) => {
+  if (!xmlDoc) {
+    return null;
+  }
+
+  const INDENT_TIMES = 6;
+
+  const highlightColors = {
+    1: '#a8e9c0', // Green (Right has it, left nothing)
+    2: '#f3a683', // Orange (Left has it, right nothing)
+    3: '#f78fb3', // Pink (Both have it, but they differ)
+  };
+
+  const walk = (node, level) => {
+    const indent = ' '.repeat(level * INDENT_TIMES);
+    const xpathVal = getXPath(node);
+
+    const differences = Object.entries(differencesObj)
+      .filter(([keyVal, { disposition }]) => {
+        const nodePath = xpathVal.replace('/ns:RTPSMsg', '');
+        const diffNodePath = keyVal.replace(/\/ns:RTPSMsg/g, '');
+        return nodePath === diffNodePath;
+      })
+      .map(([_, difference]) => difference);
+
+    const children = node.childNodes
+      ? Array.from(node.childNodes).map((child) => walk(child, level + 1))
+      : [];
+
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      return (
+        <div style={{ marginLeft: level * INDENT_TIMES }}>
+          <span>{`${indent}<${node.nodeName}>`}</span>
+          {Array.from(node.attributes).map((attr, i) => (
+            <span key={i}>{` ${attr.name}="${attr.value}"`}</span>
+          ))}
+          <span>{'>'}</span>
+          {children.length > 0 && <br />}
+          {children}
+          {differences.map((difference, i) => {
+            const { expectedMessage, actualMessage, disposition } = difference;
+            const highlightColor = highlightColors[disposition] || 'transparent';
+
+            const message = side === 'left' ? expectedMessage : actualMessage;
+
+            return (
+              <div
+                key={i}
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: highlightColor,
+                }}
+              >
+                <span>{message}</span>
+              </div>
+            );
+          })}
+          <span>{`${indent}</${node.nodeName}>`}</span>
+        </div>
+      );
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.nodeValue?.trim();
+      return text ? <span>{text}</span> : null;
+    }
+    return null;
+  };
+
+  return walk(xmlDoc.documentElement, indentLevel);
+};
