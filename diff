@@ -77,3 +77,15 @@ DiffMethod {
     4: '#63cdda', // Blue
     5: '#786fa6', // Purple
   };
+
+function formatDateRange(startDateTime, endDateTime) {
+  const options = { month: 'short', day: '2-digit' };
+  
+  const startDate = new Date(startDateTime);
+  const endDate = new Date(endDateTime);
+
+  const formattedStart = `${startDate.toLocaleDateString('en-US', options)}-${startDate.getFullYear().toString().slice(-2)} ${startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+  const formattedEnd = `${endDate.toLocaleDateString('en-US', options)}-${endDate.getFullYear().toString().slice(-2)} ${endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+
+  return `${formattedStart} - ${formattedEnd}`;
+}
