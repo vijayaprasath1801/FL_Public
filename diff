@@ -89,3 +89,17 @@ function formatDateRange(startDateTime, endDateTime) {
 
   return `${formattedStart} - ${formattedEnd}`;
 }
+
+
+//24hrs
+function formatDateRange(startDateTime, endDateTime) {
+  const options = { month: 'short', day: '2-digit' };
+
+  const startDate = new Date(startDateTime);
+  const endDate = new Date(endDateTime);
+
+  const formattedStart = `${startDate.toLocaleDateString('en-US', options)}-${startDate.getFullYear().toString().slice(-2)} ${startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })}`;
+  const formattedEnd = `${endDate.toLocaleDateString('en-US', options)}-${endDate.getFullYear().toString().slice(-2)} ${endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })}`;
+
+  return `${formattedStart} - ${formattedEnd}`;
+}
