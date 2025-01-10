@@ -1,3 +1,5 @@
+import xpath from 'xpath'; // Ensure you have the xpath library imported
+
 export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLevel = 0) => {
     if (!xmlDoc) {
         return null;
@@ -37,6 +39,7 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
                     const nodePath = xpathVal.replace('/ns:RTPSMsg', '');
                     const diffNodePath = keyVal.replace(regExp, '');
 
+                    // Compare node names considering namespaces
                     if (
                         diffExist &&
                         nodeName &&
@@ -99,7 +102,7 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
         } else if (node.nodeType === Node.TEXT_NODE) {
             return (
                 <span className="noBr">
-                    {node.nodeValue.replace(/\s/g, '')}
+                    {node .nodeValue.replace(/\s/g, '')}
                     {node.nodeValue.replace(/\s/g, '') && <br />}
                     {indent}
                     {node.nodeValue}
