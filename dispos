@@ -49,7 +49,7 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
           className="tempDiv"
           style={{ display: 'inline-block', backgroundColor: shouldHighlight ? highlightColor : 'transparent' }}
         >
-          <span>{getIndent(level)}<{node.nodeName}></span>
+         <span>{getIndent(level)}&lt;{node.nodeName}&gt;</span>
           {Array.from(node.attributes).map(attr => (
             <span key={attr.name}>{` ${attr.name}="${attr.value}"`}</span>
           ))}
