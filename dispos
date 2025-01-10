@@ -23,26 +23,37 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
     let highlightColor = 'transparent';
     let shouldRenderEmpty = false;
 
-    if (diff?.doesTheDifferenceExist) {
-      if (diff.disposition === 1 && side === 'right') {
-        highlightColor = highlightColors[1];
-      } else if (diff.disposition === 2 && side === 'left') {
-        highlightColor = highlightColors[2];
-      } else if (diff.disposition === 3) {
-        highlightColor = highlightColors[3];
-      }
-
-      // Handle empty line rendering for alignment
-      if ((side === 'right' && diff.disposition === 2) || 
-          (side === 'left' && diff.disposition === 1)) {
-        shouldRenderEmpty = true;
+    // Directly check disposition values
+    if (diff) {
+      switch (diff.disposition) {
+        case 1: // (0 1) Present in the right XML only
+          if (side === 'right') {
+            highlightColor = highlightColors[1];
+          } else if (side === 'left') {
+            shouldRenderEmpty = true;
+          }
+          break;
+        case 2: // (1 0) Present in the left XML only
+          if (side === 'left') {
+            highlightColor = highlightColors[2];
+          } else if (side === 'right') {
+            shouldRenderEmpty = true;
+          }
+          break;
+        case 3: // (1 1) Present in both XMLs but differs
+          highlightColor = highlightColors[3];
+          break;
+        default:
+          break;
       }
     }
 
+    // If we need to render an empty line to align the left side
     if (shouldRenderEmpty) {
       return renderEmptyLine(level);
     }
 
+    // If the node is an element, we need to render it
     if (node.nodeType === Node.ELEMENT_NODE) {
       const children = Array.from(node.childNodes).map((child) =>
         walk(child, level + 1)
