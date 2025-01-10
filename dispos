@@ -20,10 +20,7 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
     // Handle ELEMENT_NODE logic
     if (node.nodeType === Node.ELEMENT_NODE) {
-      const children = [];
-      for (const child of node.childNodes) {
-        children.push(walk(child, level + 1));
-      }
+    const children = Array.from(node.childNodes).map(child => walk(child, level + 1));
 
       // Determine highlighting logic
       for (const keyVal in differencesObj) {
