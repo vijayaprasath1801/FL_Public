@@ -13,14 +13,13 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
   const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
-  const walk = (node, level, isLeftSide) => {
+  const walk = (node, level, isLeftSide, emptyLinesCount) => {
     let children = [];
     let highlightColor = 'transparent';
-    let emptyLinesCount = 0;
-
+    
     // Handle ELEMENT_NODE logic
     if (node.nodeType === Node.ELEMENT_NODE) {
-      children = Array.from(node.childNodes).map(child => walk(child, level + 1, isLeftSide));
+      children = Array.from(node.childNodes).map(child => walk(child, level + 1, isLeftSide, emptyLinesCount));
 
       // Check differences for this node
       const xpathVal = getXPath(node); // Assuming getXPath is defined elsewhere
@@ -31,10 +30,10 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
         if (differencesObj[keyVal]?.doesTheDifferenceExist && nodeName === node.nodeName) {
           if (disposition === 1 && isLeftSide) { // Present on right only
             highlightColor = highlightColors[1];
-            emptyLinesCount++; // Increment empty lines for left side
+            emptyLinesCount[0]++; // Increment empty lines for left side
           } else if (disposition === 2 && !isLeftSide) { // Present on left only
             highlightColor = highlightColors[2];
-            emptyLinesCount++; // Increment empty lines for right side
+            emptyLinesCount[1]++; // Increment empty lines for right side
           } else if (disposition === 3) { // Different between left and right
             highlightColor = highlightColors[3];
           }
@@ -65,14 +64,21 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
   // Render the XML with highlights
   const renderWithAlignment = () => {
-    const leftRender = walk(xmlDoc.documentElement, indentLevel, true);
-    const rightRender = walk(xmlDoc.documentElement, indentLevel, false);
+    const leftEmptyLinesCount = [0]; // Count for left side
+    const rightEmptyLinesCount = [0]; // Count for right side
+
+    const leftRender = walk(xmlDoc.documentElement, indentLevel, true, leftEmptyLinesCount);
+    const rightRender = walk(xmlDoc.documentElement, indentLevel, false, rightEmptyLinesCount);
 
     // Create empty lines based on counts from both sides
-    const leftEmptyLines = Array.from({ length: emptyLinesCount }, (_, i) => (
+    const leftEmptyLines = Array.from({ length: rightEmptyLinesCount[0] }, (_, i) => (
       <div key={`empty-left-${i}`} style={{ height: '20px' }} />
     ));
     
+    const rightEmptyLines = Array.from({ length: leftEmptyLinesCount[0] }, (_, i) => (
+      <div key={`empty-right-${i}`} style={{ height: '20px' }} />
+    ));
+
     return (
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
@@ -81,6 +87,7 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
         </div>
         <div style={{ flex: 1 }}>
           {rightRender}
+          {rightEmptyLines}
         </div>
       </div>
     );
