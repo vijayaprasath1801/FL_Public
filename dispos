@@ -2,61 +2,62 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
   if (!xmlDoc) return null;
 
   const highlightColors = {
-    1: '#a8e9c0', // Green disposition 01
-    2: '#f3a683', // Orange disposition 10
-    3: '#f78fb3', // Pink disposition 11
+    1: '#a8e9c0', // Green disposition 01 (right only)
+    2: '#f3a683', // Orange disposition 10 (left only)
+    3: '#f78fb3', // Pink disposition 11 (both different)
   };
 
   const INDENT_TIMES = 6;
-  const tag = xmlDoc.documentElement.tagName;
-  const regExp = new RegExp(`(${tag}\\[(.+)\\]/)`, 'g');
+  const regExp = new RegExp(`(${xmlDoc.documentElement.tagName}\\[(.+)\\]/)`, 'g');
   
   const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
-  const createEmptyLines = (count) => (
-    Array.from({ length: count }, (_, index) => <div key={`empty-${index}`}><br /></div>)
+  const createEmptyLines = (count, level) => (
+    Array.from({ length: count }, (_, index) => (
+      <div key={`empty-${index}`}>
+        <span>{getIndent(level)}&nbsp;</span>
+      </div>
+    ))
   );
 
   const walk = (node, level) => {
     let isDiffExist = false;
     let highlightColor = 'transparent';
+    let emptyLines = [];
+    
     const xpathVal = getXPath(node);
 
+    // Handle ELEMENT_NODE logic
     if (node.nodeType === Node.ELEMENT_NODE) {
       const children = Array.from(node.childNodes).map(child => walk(child, level + 1));
-      let emptyLines = [];
 
-      // Determine highlighting logic
+      // Process difference highlighting and empty line creation
       for (const keyVal in differencesObj) {
-        const key = keyVal.replace(regExp, '');
-        const diffNodePath = keyVal.replace(regExp, '');
         const disposition = differencesObj[keyVal]?.disposition || null;
+        const expectedMessage = differencesObj[keyVal]?.expectedMessage || '';
+        const actualMessage = differencesObj[keyVal]?.actualMessage || '';
 
-        if (differencesObj[keyVal]?.doesTheDifferenceExist) {
-          const expectedMessage = differencesObj[keyVal]?.expectedMessage || '';
-          const actualMessage = differencesObj[keyVal]?.actualMessage || '';
-
-          // Handle disposition cases
+        if (xpathVal.includes(keyVal) && differencesObj[keyVal]?.doesTheDifferenceExist) {
           switch (disposition) {
-            case 1: // Present on right only
+            case 1: // Right only (0,1)
               if (side === 'right') {
                 isDiffExist = true;
                 highlightColor = highlightColors[disposition];
               } else {
-                emptyLines = createEmptyLines(actualMessage.split('\n').length);
+                emptyLines = createEmptyLines(actualMessage.split('\n').length, level);
               }
               break;
 
-            case 2: // Present on left only
+            case 2: // Left only (1,0)
               if (side === 'left') {
                 isDiffExist = true;
                 highlightColor = highlightColors[disposition];
               } else {
-                emptyLines = createEmptyLines(expectedMessage.split('\n').length);
+                emptyLines = createEmptyLines(expectedMessage.split('\n').length, level);
               }
               break;
 
-            case 3: // Different on both sides
+            case 3: // Both sides different (1,1)
               isDiffExist = true;
               highlightColor = highlightColors[disposition];
               break;
@@ -71,26 +72,36 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
       // Render the element
       return (
-        <div
-          className="tempDiv"
-          style={{ display: 'inline-block', backgroundColor: shouldHighlight ? highlightColor : 'transparent' }}
-        >
-          <span>{getIndent(level)}&lt;{node.nodeName}</span>
-          {Array.from(node.attributes).map(attr => (
-            <span key={attr.name}>{` ${attr.name}="${attr.value}"`}</span>
-          ))}
-          <span>&gt;</span>
+        <>
+          <div
+            className="tempDiv"
+            style={{ display: 'inline-block', backgroundColor: shouldHighlight ? highlightColor : 'transparent' }}
+          >
+            <span>{getIndent(level)}&lt;{node.nodeName}</span>
+            {Array.from(node.attributes).map(attr => (
+              <span key={attr.name}>{` ${attr.name}="${attr.value}"`}</span>
+            ))}
+            <span>&gt;</span>
+          </div>
           {children.length > 0 ? children : <hr />}
           {emptyLines}
-          <span>{getIndent(level)}</span>
-          <span>{`</${node.nodeName}>`}</span>
-        </div>
+          <div>
+            <span>{getIndent(level)}</span>
+            <span>{`</${node.nodeName}>`}</span>
+          </div>
+        </>
       );
     }
 
     // Handle TEXT_NODE logic
     else if (node.nodeType === Node.TEXT_NODE) {
-      return <span>{node.nodeValue.replace(/\s/g, " ")}</span>;
+      return (
+        <div>
+          <span style={{ backgroundColor: isDiffExist ? highlightColor : 'transparent' }}>
+            {node.nodeValue.replace(/\s/g, " ")}
+          </span>
+        </div>
+      );
     }
 
     return null;
