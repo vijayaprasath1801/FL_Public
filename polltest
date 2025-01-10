@@ -135,3 +135,5 @@ describe('PollingComponent', () => {
     );
 
     expect(updatedItem.status).toBe("COMPLETED");
+
+(?<=\s)(disposition)(?=:)
