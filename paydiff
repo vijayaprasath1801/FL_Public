@@ -2,9 +2,9 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
   if (!xmlDoc) return null;
 
   const highlightColors = {
-    1: '#a8e9c0', // Green disposition 01
-    2: '#f3a683', // Orange disposition 10
-    3: '#f78fb3', // Pink disposition 11
+    1: '#a8e9c0', // Green disposition (0 1)
+    2: '#f3a683', // Orange disposition (1 0)
+    3: '#f78fb3', // Pink disposition (1 1)
   };
 
   const INDENT_TIMES = 6;
@@ -14,13 +14,13 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
   const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
   const walk = (node, level) => {
-    let isDiffExist = false;
     let highlightColor = 'transparent';
     const xpathVal = getXPath(node);
-
+    
     // Handle ELEMENT_NODE logic
     if (node.nodeType === Node.ELEMENT_NODE) {
       const children = Array.from(node.childNodes).map(child => walk(child, level + 1));
+      let isDiffExist = false;
 
       // Determine highlighting logic
       for (const keyVal in differencesObj) {
@@ -30,21 +30,17 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
         const disposition = differencesObj[keyVal]?.disposition || null;
 
         if (differencesObj[keyVal]?.doesTheDifferenceExist &&
-            nodeName === node.nodeName &&
-            node.childNodes[0]?.textContent.replace(/\s/g, "") ===
-              differencesObj[keyVal]?.expectedMessage.replace(/\s/g, "")) {
+            nodeName === node.nodeName) {
           isDiffExist = true;
           highlightColor = highlightColors[disposition] || 'transparent';
         }
       }
 
-      const shouldHighlight = isDiffExist;
-
       // Render the element
       return (
         <div
           className="tempDiv"
-          style={{ display: 'inline-block', backgroundColor: shouldHighlight ? highlightColor : 'transparent' }}
+          style={{ display: 'inline-block', backgroundColor: isDiffExist ? highlightColor : 'transparent' }}
         >
           <span>{getIndent(level)}&lt;{node.nodeName}</span>
           {Array.from(node.attributes).map(attr => (
@@ -66,51 +62,28 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
     return null;
   };
 
-  const renderWithAlignment = (leftXml, rightXml) => {
-    const leftLines = leftXml.split('\n');
-    const rightLines = rightXml.split('\n');
-    const maxLength = Math.max(leftLines.length, rightLines.length);
-    const alignedOutput = [];
-
-    for (let i = 0; i < maxLength; i++) {
-      const leftLine = leftLines[i] || '';
-      const rightLine = rightLines[i] || '';
-
-      if (side === 'left') {
-        alignedOutput.push(leftLine);
-        if (rightLine.includes('style="background-color:')) {
-          alignedOutput.push('<hr />'); // Empty line for alignment
-        }
-      } else {
-        if (leftLine.includes('style="background-color:')) {
-          alignedOutput.push(leftLine);
-        }
-        alignedOutput.push(rightLine);
-      }
-    }
-
-    return alignedOutput.join('\n');
-  };
-
-  const xmlOutput = walk(xmlDoc.documentElement, indentLevel);
-  return renderWithAlignment(xmlOutput, xmlOutput); // Adjust this to pass left and right XML
+  return walk(xmlDoc.documentElement, indentLevel);
 };
 
 function getXPath(node) {
-  if (node === document) {
-    return "/";
-  }
+  if (node === document) return "/";
+  
   let path = "";
   let siblingIndex = 1;
+  
   while (node.parentNode) {
     const nodeName = node.nodeName;
     const siblings = Array.from(node.parentNode.childNodes).filter(child => child.nodeName === nodeName);
+    
     if (siblings.length > 1) {
       siblingIndex = siblings.indexOf(node) + 1;
       path = `/${nodeName}[${siblingIndex}]${path}`;
     } else {
       path = `/${nodeName}${path}`;
+    }
+    
     node = node.parentNode;
   }
+  
   return path;
 }
