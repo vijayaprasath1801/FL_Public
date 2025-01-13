@@ -4,89 +4,66 @@ export const renderXmlWithHighlights = (
   differencesObj,
   indentLevel = 8,
 ) => {
-  if (!leftXmlDoc || !rightXmlDoc) return null
+  if (!leftXmlDoc || !rightXmlDoc) return null;
 
   const highlightColors = {
-    1: '#a8e9c0', // Green disposition 01 (Present on the right only)
-    2: '#f3a683', // Orange disposition 10 (Present on the left only)
-    3: '#f78fb3', // Pink disposition 11 (Different between left and right)
-  }
+    1: '#a8e9c0', // Green disposition (Present on the right only)
+    2: '#f3a683', // Orange disposition (Present on the left only)
+    3: '#f78fb3', // Pink disposition (Different between left and right)
+  };
 
-  const INDENT_TIMES = 6
-  const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES)
+  const INDENT_TIMES = 6;
+  const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
   const regExp = new RegExp(
     `(${leftXmlDoc.documentElement.tagName}\\[(.+)\\]/)`,
     'g',
-  )
+  );
 
   const getXPath = (node) => {
     if (node.nodeType === Node.ELEMENT_NODE) {
-      let path = node.nodeName
-      while (node.parentNode) {
-        node = node.parentNode
-        path = node.nodeName + '/' + path
-      }
-      return path
-    }
-    return ''
-  }
-
-
-  const getElementLineCount = (node) => {
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      let lineCount = 1 // The element itself counts as 1 line
-      Array.from(node.childNodes).forEach((child) => {
-        lineCount += getElementLineCount(child)
-      })
-      return lineCount
-    }
-    return 0
-  }
-
-  const walk = (node, level, xmlDoc, isRightSide) => {
-    let isDiffExist = false
-    let highlightColor = 'transparent'
-    const xpathVal = getXPath(node)
-
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const children = Array.from(node.childNodes).map((child) =>
-        walk(child, level + 1, xmlDoc, isRightSide),
-      )
-
-
-      for (const keyVal in differencesObj) {
-        const nodeName = xpathVal.replace('/ns:RTPSMsg', '')
-        const diffNodePath = keyVal.replace(regExp, '')
-        const disposition = differencesObj[keyVal]?.disposition || null
-        const doesDiffExist = differencesObj[keyVal]?.doesTheDifferenceExist
-
-        if (doesDiffExist && nodeName === node.nodeName) {
-          if (isRightSide && disposition === 1) {
-            // Disposition 1 (Right only)
-            isDiffExist = true
-            highlightColor = highlightColors[1]
-          } else if (!isRightSide && disposition === 2) {
-            // Disposition 2 (Left only)
-            isDiffExist = true
-            highlightColor = highlightColors[2]
-          } else if (disposition === 3) {
-            // Disposition 3 (Different in both)
-            isDiffExist = true
-            highlightColor = highlightColors[3]
-          }
+      let path = node.nodeName;
+      let current = node;
+      while (current.parentNode) {
+        current = current.parentNode;
+        if (current.nodeType === Node.ELEMENT_NODE) {
+          path = current.nodeName + '/' + path;
         }
       }
+      return path;
+    }
+    return '';
+  };
 
-      const shouldHighlight = isDiffExist
+  const walk = (node, level, isRightSide) => {
+    if (!node) return null;
 
-   
+    let highlightColor = 'transparent';
+    const xpathVal = getXPath(node);
+    const children = Array.from(node.childNodes).map((child) =>
+      walk(child, level + 1, isRightSide),
+    );
+
+    // Highlight Logic
+    Object.keys(differencesObj || {}).forEach((keyVal) => {
+      const disposition = differencesObj[keyVal]?.disposition || null;
+      const doesDiffExist = differencesObj[keyVal]?.doesTheDifferenceExist;
+      const nodeName = xpathVal.replace('/ns:RTPSMsg', '');
+      if (doesDiffExist && nodeName === node.nodeName) {
+        if (isRightSide && disposition === 1) highlightColor = highlightColors[1];
+        else if (!isRightSide && disposition === 2) highlightColor = highlightColors[2];
+        else if (disposition === 3) highlightColor = highlightColors[3];
+      }
+    });
+
+    // Render Element Node
+    if (node.nodeType === Node.ELEMENT_NODE) {
       return (
         <div
           className="tempDiv"
           style={{
             display: 'inline-block',
-            backgroundColor: shouldHighlight ? highlightColor : 'transparent',
+            backgroundColor: highlightColor,
           }}
         >
           <span>
@@ -100,43 +77,25 @@ export const renderXmlWithHighlights = (
           <span>{getIndent(level)}</span>
           <span>{`</${node.nodeName}>`}</span>
         </div>
-      )
+      );
     }
 
-
-    else if (node.nodeType === Node.TEXT_NODE) {
-      return <span>{node.nodeValue.replace(/\s/g, ' ')}</span>
+    // Render Text Node
+    if (node.nodeType === Node.TEXT_NODE) {
+      return <span>{node.nodeValue?.replace(/\s/g, ' ')}</span>;
     }
 
-    return null
-  }
+    return null;
+  };
 
   const renderSideXml = (xmlDoc, isRightSide) => {
-    let emptyLineCount = 0
-    const renderXmlContent = walk(
-      xmlDoc.documentElement,
-      indentLevel,
-      xmlDoc,
-      isRightSide,
-    )
-
-    if (isRightSide) {
-      Array.from(xmlDoc.documentElement.childNodes).forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          const lineCount = getElementLineCount(node)
-          emptyLineCount += lineCount
-        }
-      })
-    }
-
-    // Return the content with the calculated empty lines in the left side if necessary
-    return renderXmlContent
-  }
+    return walk(xmlDoc.documentElement, indentLevel, isRightSide);
+  };
 
   return (
-    <div style={{display: 'flex'}}>
-      <div style={{flex: 1}}>{renderSideXml(leftXmlDoc, false)}</div>
-      <div style={{flex: 1}}>{renderSideXml(rightXmlDoc, true)}</div>
+    <div style={{ display: 'flex' }}>
+      <div style={{ flex: 1 }}>{renderSideXml(leftXmlDoc, false)}</div>
+      <div style={{ flex: 1 }}>{renderSideXml(rightXmlDoc, true)}</div>
     </div>
-  )
-}
+  );
+};
