@@ -13,14 +13,14 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
   const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
-  const walk = (node, level) => {
+  const walk = (node, level, isRightDoc) => {
     let isDiffExist = false;
     let highlightColor = 'transparent';
     const xpathVal = getXPath(node);
 
     // Handle ELEMENT_NODE logic
     if (node.nodeType === Node.ELEMENT_NODE) {
-      const children = Array.from(node.childNodes).map(child => walk(child, level + 1));
+      const children = Array.from(node.childNodes).map(child => walk(child, level + 1, isRightDoc));
 
       // Determine highlighting logic
       for (const keyVal in differencesObj) {
@@ -42,7 +42,23 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
       const shouldHighlight = isDiffExist;
 
-      // Render the element
+      // If disposition is 2 (orange), render an empty node for alignment in the left document
+      if (isRightDoc && !shouldHighlight) {
+        // Placeholder for missing node (Disposition 2)
+        return (
+          <div
+            className="tempDiv"
+            style={{ display: 'inline-block', backgroundColor: 'transparent' }}
+          >
+            <span>{getIndent(level)}&lt;{node.nodeName}&gt;</span>
+            {children.length > 0 ? children : <hr />}
+            <span>{getIndent(level)}</span>
+            <span>{`</${node.nodeName}>`}</span>
+          </div>
+        );
+      }
+
+      // Render the element with or without highlights
       return (
         <div
           className="tempDiv"
@@ -68,7 +84,20 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
     return null;
   };
 
-  return walk(xmlDoc.documentElement, indentLevel);
+  // Walk through the XML and render with alignment for both sides
+  const renderForSide = (isRightDoc) => {
+    return walk(xmlDoc.documentElement, indentLevel, isRightDoc);
+  };
+
+  return (
+    <div>
+      {/* Render the left XML (empty nodes for missing right-side elements) */}
+      {renderForSide(false)}
+
+      {/* Render the right XML with alignment and differences highlighted */}
+      {renderForSide(true)}
+    </div>
+  );
 };
 
 function getXPath(node) {
