@@ -2,9 +2,9 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
   if (!xmlDoc) return null;
 
   const highlightColors = {
-    1: '#a8e9c0', // Green disposition 01 (Present on right only)
-    2: '#f3a683', // Orange disposition 10 (Present on left only)
-    3: '#f78fb3', // Pink disposition 11 (Different between left and right)
+    1: '#a8e9c0', // Green disposition 01
+    2: '#f3a683', // Orange disposition 10
+    3: '#f78fb3', // Pink disposition 11
   };
 
   const INDENT_TIMES = 6;
@@ -13,14 +13,14 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
   const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
-  const walk = (node, level, isRightDoc) => {
+  const walk = (node, level) => {
     let isDiffExist = false;
     let highlightColor = 'transparent';
     const xpathVal = getXPath(node);
 
     // Handle ELEMENT_NODE logic
     if (node.nodeType === Node.ELEMENT_NODE) {
-      const children = Array.from(node.childNodes).map(child => walk(child, level + 1, isRightDoc));
+      const children = Array.from(node.childNodes).map(child => walk(child, level + 1));
 
       // Determine highlighting logic
       for (const keyVal in differencesObj) {
@@ -29,12 +29,10 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
         const diffNodePath = keyVal.replace(regExp, '');
         const disposition = differencesObj[keyVal]?.disposition || null;
 
-        if (
-          differencesObj[keyVal]?.doesTheDifferenceExist &&
-          nodeName === node.nodeName &&
-          node.childNodes[0]?.textContent.replace(/\s/g, '') ===
-            differencesObj[keyVal]?.expectedMessage.replace(/\s/g, '')
-        ) {
+        if (differencesObj[keyVal]?.doesTheDifferenceExist &&
+            nodeName === node.nodeName &&
+            node.childNodes[0]?.textContent.replace(/\s/g, "") ===
+              differencesObj[keyVal]?.expectedMessage.replace(/\s/g, "")) {
           isDiffExist = true;
           highlightColor = highlightColors[disposition] || 'transparent';
         }
@@ -42,23 +40,7 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
       const shouldHighlight = isDiffExist;
 
-      // If disposition is 2 (orange), render an empty node for alignment in the left document
-      if (isRightDoc && !shouldHighlight) {
-        // Placeholder for missing node (Disposition 2)
-        return (
-          <div
-            className="tempDiv"
-            style={{ display: 'inline-block', backgroundColor: 'transparent' }}
-          >
-            <span>{getIndent(level)}&lt;{node.nodeName}&gt;</span>
-            {children.length > 0 ? children : <hr />}
-            <span>{getIndent(level)}</span>
-            <span>{`</${node.nodeName}>`}</span>
-          </div>
-        );
-      }
-
-      // Render the element with or without highlights
+      // Render the element
       return (
         <div
           className="tempDiv"
@@ -78,43 +60,67 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
     // Handle TEXT_NODE logic
     else if (node.nodeType === Node.TEXT_NODE) {
-      return <span>{node.nodeValue.replace(/\s/g, ' ')}</span>;
+      return <span>{node.nodeValue.replace(/\s/g, " ")}</span>;
     }
 
     return null;
   };
 
-  // Walk through the XML and render with alignment for both sides
-  const renderForSide = (isRightDoc) => {
-    return walk(xmlDoc.documentElement, indentLevel, isRightDoc);
+  const renderWithAlignment = (xmlDoc, side) => {
+    const lines = [];
+    const leftLines = [];
+    const rightLines = [];
+
+    const leftDiffs = Object.keys(differencesObj).filter(key => differencesObj[key].disposition === 2);
+    const rightDiffs = Object.keys(differencesObj).filter(key => differencesObj[key].disposition === 1);
+    const bothDiffs = Object.keys(differencesObj).filter(key => differencesObj[key].disposition === 3);
+
+    // Walk through the XML and build the lines for left and right
+    const leftContent = walk(xmlDoc.documentElement, indentLevel);
+    const rightContent = walk(xmlDoc.documentElement, indentLevel);
+
+    // Add empty lines for alignment
+    const maxLines = Math.max(leftContent.length, rightContent.length);
+    for (let i = 0; i < maxLines; i++) {
+      if (i < leftContent.length) {
+        leftLines.push(leftContent[i]);
+      } else {
+        leftLines.push(<hr />); // Empty line for left
+      }
+
+      if (i < rightContent.length) {
+        rightLines.push(rightContent[i]);
+      } else {
+        rightLines.push(<hr />); // Empty line for right
+      }
+    }
+
+    return (
+      <div>
+        <div>{leftLines}</div>
+        <div>{rightLines}</div>
+      </div>
+    );
   };
 
-  return (
-    <div>
-      {/* Render the left XML (empty nodes for missing right-side elements) */}
-      {renderForSide(false)}
-
-      {/* Render the right XML with alignment and differences highlighted */}
-      {renderForSide(true)}
-    </div>
-  );
+  return renderWithAlignment(xmlDoc, side);
 };
 
 function getXPath(node) {
-  if (node === document) return "/";
-
+  if (node === document) {
+    return "/";
+  }
   let path = "";
-  while (node && node.nodeType === Node.ELEMENT_NODE) {
-    let index = 1;
-    let sibling = node.previousSibling;
-    while (sibling) {
-      if (sibling.nodeType === Node.ELEMENT_NODE && sibling.nodeName === node.nodeName) {
-        index++;
-      }
-      sibling = sibling.previousSibling;
+  let siblingIndex = 1;
+  while (node.parentNode) {
+    const node Name = node.nodeName;
+    const siblings = Array.from(node.parentNode.childNodes).filter(child => child.nodeName === nodeName);
+    if (siblings.length > 1) {
+      siblingIndex = siblings.indexOf(node) + 1;
+      path = `/${nodeName}[${siblingIndex}]${path}`;
+    } else {
+      path = `/${nodeName}${path}`;
     }
-    const tagName = node.nodeName;
-    path = `/${tagName}[${index}]${path}`;
     node = node.parentNode;
   }
   return path;
