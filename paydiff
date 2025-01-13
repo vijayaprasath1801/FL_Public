@@ -2,9 +2,9 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
   if (!xmlDoc) return null;
 
   const highlightColors = {
-    1: '#a8e9c0', // Green disposition (0 1)
-    2: '#f3a683', // Orange disposition (1 0)
-    3: '#f78fb3', // Pink disposition (1 1)
+    1: '#a8e9c0', // Green disposition 01
+    2: '#f3a683', // Orange disposition 10
+    3: '#f78fb3', // Pink disposition 11
   };
 
   const INDENT_TIMES = 6;
@@ -13,14 +13,14 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
   const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
-  const walk = (node, level, isLeftSide) => {
+  const walk = (node, level) => {
     let isDiffExist = false;
     let highlightColor = 'transparent';
     const xpathVal = getXPath(node);
 
     // Handle ELEMENT_NODE logic
     if (node.nodeType === Node.ELEMENT_NODE) {
-      const children = Array.from(node.childNodes).map(child => walk(child, level + 1, isLeftSide));
+      const children = Array.from(node.childNodes).map(child => walk(child, level + 1));
 
       // Determine highlighting logic
       for (const keyVal in differencesObj) {
@@ -66,59 +66,51 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
     return null;
   };
 
-  // Generate empty lines based on differences
-  const generateEmptyLines = (count) => {
-    return Array.from({ length: count }, (_, i) => <hr key={i} />);
+  const renderWithAlignment = (leftXml, rightXml) => {
+    const leftLines = leftXml.split('\n');
+    const rightLines = rightXml.split('\n');
+    const maxLength = Math.max(leftLines.length, rightLines.length);
+    const alignedOutput = [];
+
+    for (let i = 0; i < maxLength; i++) {
+      const leftLine = leftLines[i] || '';
+      const rightLine = rightLines[i] || '';
+
+      if (side === 'left') {
+        alignedOutput.push(leftLine);
+        if (rightLine.includes('style="background-color:')) {
+          alignedOutput.push('<hr />'); // Empty line for alignment
+        }
+      } else {
+        if (leftLine.includes('style="background-color:')) {
+          alignedOutput.push(leftLine);
+        }
+        alignedOutput.push(rightLine);
+      }
+    }
+
+    return alignedOutput.join('\n');
   };
 
-  // Main rendering logic
-  let leftEmptyLinesCount = 0;
-  let rightEmptyLinesCount = 0;
-
-  for (const key in differencesObj) {
-    if (differencesObj[key].disposition === 1) { // Present on right only
-      rightEmptyLinesCount++;
-    } else if (differencesObj[key].disposition === 2) { // Present on left only
-      leftEmptyLinesCount++;
-    }
-  }
-
-  return (
-    <div>
-      {/* Left Side */}
-      <div>
-        {walk(xmlDoc.documentElement, indentLevel, true)}
-        {generateEmptyLines(leftEmptyLinesCount)}
-      </div>
-
-      {/* Right Side */}
-      <div>
-        {walk(xmlDoc.documentElement, indentLevel, false)}
-        {generateEmptyLines(rightEmptyLinesCount)}
-      </div>
-    </div>
-  );
+  const xmlOutput = walk(xmlDoc.documentElement, indentLevel);
+  return renderWithAlignment(xmlOutput, xmlOutput); // Adjust this to pass left and right XML
 };
 
 function getXPath(node) {
-  if (node === document) return "/";
-  
+  if (node === document) {
+    return "/";
+  }
   let path = "";
   let siblingIndex = 1;
-  
   while (node.parentNode) {
     const nodeName = node.nodeName;
     const siblings = Array.from(node.parentNode.childNodes).filter(child => child.nodeName === nodeName);
-    
     if (siblings.length > 1) {
       siblingIndex = siblings.indexOf(node) + 1;
       path = `/${nodeName}[${siblingIndex}]${path}`;
     } else {
       path = `/${nodeName}${path}`;
-    }
-    
     node = node.parentNode;
   }
-  
   return path;
 }
