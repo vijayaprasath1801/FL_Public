@@ -1,89 +1,92 @@
-export const renderXmlWithHighlights = (
-  leftXmlDoc,
-  rightXmlDoc,
-  differencesObj,
-  indentLevel = 8
-) => {
-  if (!leftXmlDoc || !rightXmlDoc) return null;
+export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLevel = 8) => {
+  if (!xmlDoc) return null;
 
   const highlightColors = {
-    1: '#a8e9c0', // Green (Right only)
-    2: '#f3a683', // Orange (Left only)
-    3: '#f78fb3', // Pink (Different between left and right)
+    1: '#a8e9c0', // Green disposition 01 (Present on right only)
+    2: '#f3a683', // Orange disposition 10 (Present on left only)
+    3: '#f78fb3', // Pink disposition 11 (Different between left and right)
   };
 
   const INDENT_TIMES = 6;
+  const tag = xmlDoc.documentElement.tagName;
+  const regExp = new RegExp(`(${tag}\\[(.+)\\]/)`, 'g');
+
   const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
-  const getXPath = (node) => {
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      let path = node.nodeName;
-      while (node.parentNode && node.parentNode.nodeName !== '#document') {
-        node = node.parentNode;
-        path = node.nodeName + '/' + path;
-      }
-      return path;
-    }
-    return '';
-  };
-
-  const walk = (node, level, isRightSide) => {
+  const walk = (node, level) => {
+    let isDiffExist = false;
     let highlightColor = 'transparent';
     const xpathVal = getXPath(node);
 
-    Object.keys(differencesObj).forEach((keyVal) => {
-      const disposition = differencesObj[keyVal]?.disposition;
-      const doesDiffExist = differencesObj[keyVal]?.doesTheDifferenceExist;
+    // Handle ELEMENT_NODE logic
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const children = Array.from(node.childNodes).map(child => walk(child, level + 1));
 
-      if (doesDiffExist && xpathVal.endsWith(keyVal)) {
-        if (isRightSide && disposition === 1) {
-          highlightColor = highlightColors[1];
-        } else if (!isRightSide && disposition === 2) {
-          highlightColor = highlightColors[2];
-        } else if (disposition === 3) {
-          highlightColor = highlightColors[3];
+      // Determine highlighting logic
+      for (const keyVal in differencesObj) {
+        const key = keyVal.replace(regExp, '');
+        const nodeName = xpathVal.replace('/ns:RTPSMsg', '');
+        const diffNodePath = keyVal.replace(regExp, '');
+        const disposition = differencesObj[keyVal]?.disposition || null;
+
+        if (
+          differencesObj[keyVal]?.doesTheDifferenceExist &&
+          nodeName === node.nodeName &&
+          node.childNodes[0]?.textContent.replace(/\s/g, '') ===
+            differencesObj[keyVal]?.expectedMessage.replace(/\s/g, '')
+        ) {
+          isDiffExist = true;
+          highlightColor = highlightColors[disposition] || 'transparent';
         }
       }
-    });
 
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const children = Array.from(node.childNodes).map((child) =>
-        walk(child, level + 1, isRightSide)
-      );
+      const shouldHighlight = isDiffExist;
 
+      // Render the element
       return (
         <div
-          key={xpathVal}
-          style={{
-            display: 'block',
-            backgroundColor: highlightColor,
-            paddingLeft: `${level * INDENT_TIMES}px`,
-          }}
+          className="tempDiv"
+          style={{ display: 'inline-block', backgroundColor: shouldHighlight ? highlightColor : 'transparent' }}
         >
-          <span>{`${getIndent(level)}<${node.nodeName}`}</span>
-          {Array.from(node.attributes).map((attr) => (
+          <span>{getIndent(level)}&lt;{node.nodeName}</span>
+          {Array.from(node.attributes).map(attr => (
             <span key={attr.name}>{` ${attr.name}="${attr.value}"`}</span>
           ))}
           <span>&gt;</span>
-          {children}
-          <span>{`${getIndent(level)}</${node.nodeName}>`}</span>
+          {children.length > 0 ? children : <hr />}
+          <span>{getIndent(level)}</span>
+          <span>{`</${node.nodeName}>`}</span>
         </div>
       );
     }
 
-    if (node.nodeType === Node.TEXT_NODE) {
-      return (
-        <span key={xpathVal} style={{ backgroundColor: highlightColor }}>
-          {node.nodeValue.trim()}
-        </span>
-      );
+    // Handle TEXT_NODE logic
+    else if (node.nodeType === Node.TEXT_NODE) {
+      return <span>{node.nodeValue.replace(/\s/g, ' ')}</span>;
     }
 
     return null;
   };
 
-  return {
-    leftXmlResult: walk(leftXmlDoc.documentElement, indentLevel, false),
-    rightXmlResult: walk(rightXmlDoc.documentElement, indentLevel, true),
-  };
+  return walk(xmlDoc.documentElement, indentLevel);
 };
+
+function getXPath(node) {
+  if (node === document) return "/";
+
+  let path = "";
+  while (node && node.nodeType === Node.ELEMENT_NODE) {
+    let index = 1;
+    let sibling = node.previousSibling;
+    while (sibling) {
+      if (sibling.nodeType === Node.ELEMENT_NODE && sibling.nodeName === node.nodeName) {
+        index++;
+      }
+      sibling = sibling.previousSibling;
+    }
+    const tagName = node.nodeName;
+    path = `/${tagName}[${index}]${path}`;
+    node = node.parentNode;
+  }
+  return path;
+}
