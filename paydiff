@@ -2,33 +2,25 @@ export const renderXmlWithHighlights = (
   leftXmlDoc,
   rightXmlDoc,
   differencesObj,
-  indentLevel = 8,
+  indentLevel = 8
 ) => {
   if (!leftXmlDoc || !rightXmlDoc) return null;
 
   const highlightColors = {
-    1: '#a8e9c0', // Green disposition (Present on the right only)
-    2: '#f3a683', // Orange disposition (Present on the left only)
-    3: '#f78fb3', // Pink disposition (Different between left and right)
+    1: '#a8e9c0', // Green (Right only)
+    2: '#f3a683', // Orange (Left only)
+    3: '#f78fb3', // Pink (Different between left and right)
   };
 
   const INDENT_TIMES = 6;
   const getIndent = (level) => '\u00A0'.repeat(level * INDENT_TIMES);
 
-  const regExp = new RegExp(
-    `(${leftXmlDoc.documentElement.tagName}\\[(.+)\\]/)`,
-    'g',
-  );
-
   const getXPath = (node) => {
     if (node.nodeType === Node.ELEMENT_NODE) {
       let path = node.nodeName;
-      let current = node;
-      while (current.parentNode) {
-        current = current.parentNode;
-        if (current.nodeType === Node.ELEMENT_NODE) {
-          path = current.nodeName + '/' + path;
-        }
+      while (node.parentNode && node.parentNode.nodeName !== '#document') {
+        node = node.parentNode;
+        path = node.nodeName + '/' + path;
       }
       return path;
     }
@@ -36,66 +28,62 @@ export const renderXmlWithHighlights = (
   };
 
   const walk = (node, level, isRightSide) => {
-    if (!node) return null;
-
     let highlightColor = 'transparent';
     const xpathVal = getXPath(node);
-    const children = Array.from(node.childNodes).map((child) =>
-      walk(child, level + 1, isRightSide),
-    );
 
-    // Highlight Logic
-    Object.keys(differencesObj || {}).forEach((keyVal) => {
-      const disposition = differencesObj[keyVal]?.disposition || null;
+    Object.keys(differencesObj).forEach((keyVal) => {
+      const disposition = differencesObj[keyVal]?.disposition;
       const doesDiffExist = differencesObj[keyVal]?.doesTheDifferenceExist;
-      const nodeName = xpathVal.replace('/ns:RTPSMsg', '');
-      if (doesDiffExist && nodeName === node.nodeName) {
-        if (isRightSide && disposition === 1) highlightColor = highlightColors[1];
-        else if (!isRightSide && disposition === 2) highlightColor = highlightColors[2];
-        else if (disposition === 3) highlightColor = highlightColors[3];
+
+      if (doesDiffExist && xpathVal.endsWith(keyVal)) {
+        if (isRightSide && disposition === 1) {
+          highlightColor = highlightColors[1];
+        } else if (!isRightSide && disposition === 2) {
+          highlightColor = highlightColors[2];
+        } else if (disposition === 3) {
+          highlightColor = highlightColors[3];
+        }
       }
     });
 
-    // Render Element Node
     if (node.nodeType === Node.ELEMENT_NODE) {
+      const children = Array.from(node.childNodes).map((child) =>
+        walk(child, level + 1, isRightSide)
+      );
+
       return (
         <div
-          className="tempDiv"
+          key={xpathVal}
           style={{
-            display: 'inline-block',
+            display: 'block',
             backgroundColor: highlightColor,
+            paddingLeft: `${level * INDENT_TIMES}px`,
           }}
         >
-          <span>
-            {getIndent(level)}&lt;{node.nodeName}
-          </span>
+          <span>{`${getIndent(level)}<${node.nodeName}`}</span>
           {Array.from(node.attributes).map((attr) => (
             <span key={attr.name}>{` ${attr.name}="${attr.value}"`}</span>
           ))}
           <span>&gt;</span>
-          {children.length > 0 ? children : <hr />}
-          <span>{getIndent(level)}</span>
-          <span>{`</${node.nodeName}>`}</span>
+          {children}
+          <span>{`${getIndent(level)}</${node.nodeName}>`}</span>
         </div>
       );
     }
 
-    // Render Text Node
     if (node.nodeType === Node.TEXT_NODE) {
-      return <span>{node.nodeValue?.replace(/\s/g, ' ')}</span>;
+      return (
+        <span key={xpathVal} style={{ backgroundColor: highlightColor }}>
+          {node.nodeValue.trim()}
+        </span>
+      );
     }
 
     return null;
   };
 
-  const renderSideXml = (xmlDoc, isRightSide) => {
-    return walk(xmlDoc.documentElement, indentLevel, isRightSide);
+  return {
+    leftXmlResult: walk(leftXmlDoc.documentElement, indentLevel, false),
+    rightXmlResult: walk(rightXmlDoc.documentElement, indentLevel, true),
   };
-
-  return (
-    <div style={{ display: 'flex' }}>
-      <div style={{ flex: 1 }}>{renderSideXml(leftXmlDoc, false)}</div>
-      <div style={{ flex: 1 }}>{renderSideXml(rightXmlDoc, true)}</div>
-    </div>
-  );
 };
