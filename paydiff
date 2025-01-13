@@ -24,19 +24,26 @@ export const renderXmlWithHighlights = (xmlDoc, side, differencesObj, indentLeve
 
       // Determine highlighting logic
       for (const keyVal in differencesObj) {
-        const key = keyVal.replace(regExp, '');
         const nodeName = xpathVal.replace('/ns:RTPSMsg', '');
-        const diffNodePath = keyVal.replace(regExp, '');
         const disposition = differencesObj[keyVal]?.disposition || null;
+        const expectedMessage = differencesObj[keyVal]?.expectedMessage || '';
+        const actualMessage = differencesObj[keyVal]?.actualMessage || '';
+        const doesTheDifferenceExist = differencesObj[keyVal]?.doesTheDifferenceExist || false;
 
-        if (differencesObj[keyVal]?.doesTheDifferenceExist &&
-            nodeName === node.nodeName) {
-          isDiffExist = true;
-          highlightColor = highlightColors[disposition] || 'transparent';
+        // Check if the difference exists and apply disposition
+        if (doesTheDifferenceExist && nodeName === node.nodeName) {
+          // Check if the node matches the condition of differences
+          if (
+            (side === 'left' && expectedMessage === node.textContent.trim()) ||
+            (side === 'right' && actualMessage === node.textContent.trim())
+          ) {
+            isDiffExist = true;
+            highlightColor = highlightColors[disposition] || 'transparent';
+          }
         }
       }
 
-      // Render the element
+      // Render the element with the appropriate highlight color
       return (
         <div
           className="tempDiv"
