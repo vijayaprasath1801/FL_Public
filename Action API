@@ -1,0 +1,58 @@
+const handleActionValueChange = (value: string, item: any) => {
+  setSelectedDataSet({ ...item }); // Update selected dataset
+
+  // Update the selected action
+  setSelectedAction((prevState) => ({
+    ...prevState,
+    [item.name]: value,
+  }));
+
+  // Dispatch actions based on the value and item status
+  switch (value) {
+    case "run":
+      if (item.status === "PAUSED") {
+        dispatch(resumeAction(item)); // Dispatch action to resume
+      } else if (item.status === "READY") {
+        dispatch(startRunAction(item)); // Dispatch action to start a new run
+      } else {
+        console.warn("Run action not allowed for this status");
+      }
+      break;
+
+    case "pause":
+      if (item.status === "RUNNING" || item.status === "IN_PROGRESS") {
+        dispatch(pauseAction(item)); // Dispatch action to pause
+      } else {
+        console.warn("Pause action not allowed for this status");
+      }
+      break;
+
+    case "cancel":
+      if (
+        item.status === "RUNNING" ||
+        item.status === "PAUSED" ||
+        item.status === "READY"
+      ) {
+        dispatch(cancelAction(item)); // Dispatch action to cancel
+      } else {
+        console.warn("Cancel action not allowed for this status");
+      }
+      break;
+
+    case "delete":
+      if (item.status === "FAILED" || item.status === "COMPLETED") {
+        dispatch(deleteAction(item)); // Dispatch action to delete
+      } else {
+        console.warn("Delete action not allowed for this status");
+      }
+      break;
+
+    default:
+      console.warn("Unknown action");
+  }
+
+  // Handle additional UI updates (e.g., opening panels)
+  if (value === "run") {
+    setOpenInitiateRunPanel(true);
+  }
+};
