@@ -1,0 +1,71 @@
+import React from "react";
+import { MenuButton, MenuItem } from "@/components";
+
+const ActionButtons = ({
+  status,
+  onActionClick,
+  disabled = false,
+  item,
+  pageType, // Add pageType for contextual actions
+}) => {
+  const actions = [
+    {
+      label: "Resume",
+      value: "resume",
+      show: ["PAUSED"],
+    },
+    {
+      label: "Cancel",
+      value: "cancel",
+      show: ["STARTED", "RESUMED", "SCHEDULED_NOT_STARTED"],
+    },
+    {
+      label: "Pause",
+      value: "pause",
+      show: ["STARTED", "RESUMED"],
+    },
+    {
+      label: "Re-Run",
+      value: "run",
+      show: ["COMPLETED"],
+      validate: (item, pageType) => pageType === "reRunPage", // Only show on the "Re-Run" page
+    },
+    {
+      label: "Schedule a Run",
+      value: "schedule_run",
+      show: ["COMPLETED"],
+      validate: (item, pageType) => pageType === "schedulePage", // Only show on the "Schedule Run" page
+    },
+    {
+      label: "Delete",
+      value: "purge",
+      show: ["ERROR"],
+    },
+  ];
+
+  // Filter actions based on `show` and optional `validate` function
+  const filteredActions = actions.filter(
+    (action) =>
+      action.show.includes(status) &&
+      (!action.validate || action.validate(item, pageType)) // Apply validation if provided
+  );
+
+  return (
+    <MenuButton
+      width={200}
+      label="Actions"
+      kind="standard"
+      selectedValue=""
+      disabled={disabled}
+      onSelectedValueChange={(value) => onActionClick(value, item)}
+    >
+      {filteredActions.map((action) => (
+        <MenuItem key={action.value} value={action.value}>
+          {action.label}
+        </MenuItem>
+      ))}
+    </MenuButton>
+  );
+};
+
+export default ActionButtons;
