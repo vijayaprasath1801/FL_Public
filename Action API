@@ -56,3 +56,18 @@ const handleActionValueChange = (value: string, item: any) => {
     setOpenInitiateRunPanel(true);
   }
 };
+
+
+    switch (value) {
+      case "cancel":
+        dispatch(cancelRunAction(item));
+        break;
+
+      case "run":
+        setOpenInitiateRunPanel(true);
+        break;
+
+      default:
+        console.warn(`Unknown action "${value}" selected for:`, item);
+        break;
+    }
