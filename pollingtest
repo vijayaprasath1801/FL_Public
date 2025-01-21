@@ -1,0 +1,116 @@
+import React from "react";
+import { render, screen, waitFor, act } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import { getPaymentDatasetAPI } from "../../service/paymentdataset.service";
+import { updatePendingDatasetAction } from "../../actions/paymentdataset.actions";
+import { PAYMENT_DATASET_FEATURE_KEY, paymentDatasetReducer } from "../../reducers/paymentdataset.reducer";
+import PollingComponent from "../PollingComponent";
+
+// Mock the API
+jest.mock("../../service/paymentdataset.service", () => ({
+  getPaymentDatasetAPI: jest.fn(),
+}));
+
+describe("PollingComponent", () => {
+  let store: any;
+
+  const mockPaymentDataset = {
+    id: "123",
+    status: "IN_PROGRESS",
+    items: [
+      { id: "1", name: "Item1" },
+      { id: "2", name: "Item2" },
+    ],
+  };
+
+  const mockResponse = {
+    id: "123",
+    status: "COMPLETED",
+    items: [
+      { id: "1", name: "Item1 Updated" },
+      { id: "2", name: "Item2" },
+    ],
+  };
+
+  beforeEach(() => {
+    store = configureStore({
+      reducer: {
+        [PAYMENT_DATASET_FEATURE_KEY]: paymentDatasetReducer,
+      },
+      preloadedState: {
+        [PAYMENT_DATASET_FEATURE_KEY]: {
+          data: mockPaymentDataset,
+          error: false,
+          loading: false,
+        },
+      },
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should poll and update the dataset correctly", async () => {
+    // Mock the API response
+    (getPaymentDatasetAPI as jest.Mock).mockResolvedValue(mockResponse);
+
+    // Render the component
+    render(
+      <Provider store={store}>
+        <PollingComponent paymentDataset={mockPaymentDataset} />
+      </Provider>
+    );
+
+    // Ensure the API was called during polling
+    await waitFor(() => {
+      expect(getPaymentDatasetAPI).toHaveBeenCalledWith("123");
+    });
+
+    // Wait for the action to be dispatched and check updated state
+    await waitFor(() => {
+      const state = store.getState()[PAYMENT_DATASET_FEATURE_KEY];
+      expect(state.data.items[0].name).toBe("Item1 Updated");
+      expect(state.data.status).toBe("COMPLETED");
+    });
+  });
+
+  it("should clear the timer when the status is COMPLETED or ERROR", async () => {
+    (getPaymentDatasetAPI as jest.Mock).mockResolvedValue({
+      ...mockResponse,
+      status: "COMPLETED",
+    });
+
+    const { unmount } = render(
+      <Provider store={store}>
+        <PollingComponent paymentDataset={mockPaymentDataset} />
+      </Provider>
+    );
+
+    await waitFor(() => {
+      expect(getPaymentDatasetAPI).toHaveBeenCalledWith("123");
+    });
+
+    unmount(); // Ensure cleanup happens
+    expect(clearTimeout).toHaveBeenCalled();
+  });
+
+  it("should stop polling if an API error occurs", async () => {
+    (getPaymentDatasetAPI as jest.Mock).mockRejectedValue(new Error("API Error"));
+
+    render(
+      <Provider store={store}>
+        <PollingComponent paymentDataset={mockPaymentDataset} />
+      </Provider>
+    );
+
+    // Ensure the API was called during polling
+    await waitFor(() => {
+      expect(getPaymentDatasetAPI).toHaveBeenCalledWith("123");
+    });
+
+    // Wait for no further polling after an error
+    expect(setTimeout).toHaveBeenCalledTimes(1);
+  });
+});
