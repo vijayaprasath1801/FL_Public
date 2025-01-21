@@ -1,0 +1,41 @@
+import React, { useEffect } from "react";
+You, last month SHPIX-2376 Polling Component refactored an
+import { useDispatch, useSelector) from "react-redux";
+import { updatePendingDatasetAction } from "../../actions/paymentdataset.actions";
+import { status } from "../../constants";
+import { getPaymentDatasetState } from "../../reducers/paymentdataset.reducer";
+import { getPaymentDatasetAPI } from "../../service/paymentdataset.service";
+const PollingComponent React.memo(({paymentDataset)) => {
+const dispatch useDispatch();
+const {data: paymentDatasetData) useSelector (getPaymentDatasetState);
+let timer null;
+const WAIT FOR 30000;
+const poll async () => {
+try {
+const response await getPaymentDatasetAPI (paymentDataset.id);
+if (response) {
+const updatedItems paymentDatasetData.items.map((item)
+item.id === response.id ? response: item
+);
+const updatedData (...paymentDatasetData, items updatedItems)
+dispatch(updatePendingDatasetAction(updatedData));
+}
+if ([status.COMPLETED, status.ERROR].includes (response.status)) {
+if(timer) clearTimeout(timer);
+return;
+}
+} catch (error) {
+if(timer) clearTimeout(timer);
+}
+};
+useEffect(() => {
+if (1[status.COMPLETED, status.ERROR].includes (paymentDataset.status)) (
+timer setTimeout(poll, WAIT_FOR);
+return () => {
+if(timer) clearTimeout(timer)
+}
+), [dispatch, paymentDatasetData.items, paymentDataset]);
+return
+);
+export default PollingComponent;
+
