@@ -71,3 +71,16 @@ const handleActionValueChange = (value: string, item: any) => {
         console.warn(`Unknown action "${value}" selected for:`, item);
         break;
     }
+
+
+ async (payload, { rejectWithValue }) => {
+    try {
+      const response = await cancelPaymentRunsAPI(payload);
+      if (!response.ok || response.status >= 400) {
+        return rejectWithValue(`Error: ${response.statusText} (Status: ${response.status})`);
+      }
+      return response.data; 
+    } catch (error) {
+      return rejectWithValue(error.message || "Unknown error");
+    }
+  }
