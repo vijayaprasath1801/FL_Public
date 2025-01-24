@@ -1,0 +1,78 @@
+import React from "react";
+import { render, fireEvent, screen } from "@testing-library/react";
+import ActionButtons from "../ActionButtons";  // Adjust the path accordingly
+
+describe("ActionButtons", () => {
+  const mockOnActionClick = jest.fn();
+
+  const mockItem = {
+    payment: {
+      sCount: 1,
+    },
+  };
+
+  const renderComponent = (status, pageType, disabled = false) => {
+    render(
+      <ActionButtons
+        status={status}
+        onActionClick={mockOnActionClick}
+        disabled={disabled}
+        item={mockItem}
+        pageType={pageType}
+      />
+    );
+  };
+
+  beforeEach(() => {
+    mockOnActionClick.mockClear();
+  });
+
+  it("renders correct actions based on status and pageType", () => {
+    renderComponent("PAUSED", "testRun");
+    expect(screen.getByText("Resume")).toBeInTheDocument();
+    expect(screen.queryByText("Cancel")).toBeNull();
+    expect(screen.queryByText("Pause")).toBeNull();
+    expect(screen.queryByText("Re-Run")).toBeNull();
+    expect(screen.queryByText("Schedule a run")).toBeNull();
+
+    renderComponent("STARTED", "testRun");
+    expect(screen.getByText("Pause")).toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
+    expect(screen.queryByText("Resume")).toBeNull();
+    expect(screen.queryByText("Re-Run")).toBeNull();
+    expect(screen.queryByText("Schedule a run")).toBeNull();
+
+    renderComponent("COMPLETED", "testRun");
+    expect(screen.queryByText("Pause")).toBeNull();
+    expect(screen.queryByText("Cancel")).toBeNull();
+    expect(screen.queryByText("Resume")).toBeNull();
+    expect(screen.getByText("Re-Run")).toBeInTheDocument();
+    expect(screen.queryByText("Schedule a run")).toBeNull();
+
+    renderComponent("COMPLETED", "payments");
+    expect(screen.queryByText("Pause")).toBeNull();
+    expect(screen.queryByText("Cancel")).toBeNull();
+    expect(screen.queryByText("Resume")).toBeNull();
+    expect(screen.queryByText("Re-Run")).toBeNull();
+    expect(screen.getByText("Schedule a run")).toBeInTheDocument();
+  });
+
+  it("does not render actions when disabled", () => {
+    renderComponent("PAUSED", "testRun", true);
+    expect(screen.queryByText("Resume")).toBeNull();
+    expect(screen.queryByText("Cancel")).toBeNull();
+    expect(screen.queryByText("Pause")).toBeNull();
+    expect(screen.queryByText("Re-Run")).toBeNull();
+    expect(screen.queryByText("Schedule a run")).toBeNull();
+  });
+
+  it("calls onActionClick when an action is selected", () => {
+    renderComponent("STARTED", "testRun");
+
+    fireEvent.click(screen.getByText("Pause"));
+    expect(mockOnActionClick).toHaveBeenCalledWith("pause", mockItem);
+
+    fireEvent.click(screen.getByText("Cancel"));
+    expect(mockOnActionClick).toHaveBeenCalledWith("cancel", mockItem);
+  });
+});
