@@ -1,63 +1,51 @@
 import React from "react";
-import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react"; // Example: Using Chakra UI
-import { CheckIcon } from "@chakra-ui/icons";
+import { MenuButton, MenuItem} from "@wf-wfria/pioneer-core";
+const ActionButtons = (( status, onActionClick, disabled false, item pageType)) {
+const actions - [
+{
+label: "Resume",
+value: "resume"
+show: ["PAUSED"],
+label: "Cancel",
+value: "cancel",
+show: ["STARTED", "RESUMED", "SCHEDULED_NOT_STARTED"],
+label: "Pause",
+value: "pause",
+You, 2 days ago Sex 2428-Reusable component created for action
+show: ["STARTED", "RESUMED"],
+label: "Re-Run",
+value: "run",
+show: ["COMPLETED"],
+validate: (item, pageType) => pageType === "testRun",
+label: 'Schedule a run,
+value: 'run',
+show: ["COMPLETED"],
+validate: (item, pageType) => pageType == "payments" && item?.payment.sCount != 0,
 
-interface ActionButtonProps {
-  status: string; // Current status
-  onActionClick: (action: string) => void; // Callback for action click
-  disabled?: boolean; // Optional: Disable the button
-}
+]
 
-const ActionButton: React.FC<ActionButtonProps> = ({ status, onActionClick, disabled = false }) => {
-  // Define actions and their conditions
-  const actions = [
-    {
-      label: "Resume",
-      value: "resume",
-      show: ["PAUSED"], // Show for these statuses
-    },
-    {
-      label: "Cancel",
-      value: "cancel",
-      show: ["STARTED", "IN PROGRESS", "RESUMED", "SCHEDULED NOT STARTED"],
-    },
-    {
-      label: "Pause",
-      value: "pause",
-      show: ["STARTED", "IN PROGRESS", "RESUMED"],
-    },
-    {
-      label: "Re-Run",
-      value: "resume",
-      show: ["STARTED", "SCHEDULED NOT STARTED"],
-    },
-  ];
-
-  // Filter actions based on the current status
-  const filteredActions = actions.filter((action) => action.show.includes(status));
-
-  return (
-    <Menu>
-      <MenuButton as={Button} isDisabled={disabled} width="200px">
-        Actions
-      </MenuButton>
-      <MenuList>
-        {filteredActions.length > 0 ? (
-          filteredActions.map((action) => (
-            <MenuItem
-              key={action.value}
-              onClick={() => onActionClick(action.value)} // Handle action click
-              icon={<CheckIcon />}
-            >
-              {action.label}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem isDisabled>No Actions Available</MenuItem>
-        )}
-      </MenuList>
-    </Menu>
-  );
+const filteredActions actions.filter(
+(action) ->
+action.show.includes (status) &&
+(laction.validate || action.validate(item, pageType))
+);
+return (
+<MenuButton
+width-(200)
+label-"Actions"
+kind-standard"
+selectedValue("")
+disabled=(disabled)
+onSelectedValueChange=((value) => onActionClick(value, item)]>
+filteredActions.map((action) {
+return (
+<MenuItem
+key {action.value}
+value=[action.value}
+(action.label]
+</MenuItem>
+>
+})}
+</MenuButton>
 };
-
-export default ActionButton;
+export default ActionButtons;
