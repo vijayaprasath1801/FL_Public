@@ -29,7 +29,7 @@ describe("ActionButtons", () => {
 
   it("renders correct actions based on status and pageType", () => {
     renderComponent("PAUSED", "testRun");
-    expect(screen.getByText("Resume")).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /Resume/ })).toBeInTheDocument();
     expect(screen.queryByText("Cancel")).toBeNull();
     expect(screen.queryByText("Pause")).toBeNull();
     expect(screen.queryByText("Re-Run")).toBeNull();
