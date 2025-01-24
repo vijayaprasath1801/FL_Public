@@ -13,21 +13,29 @@ jest.mock("../../../service/paymentdataset.service", () => ({
   getPaymentDatasetAPI: jest.fn(),
 }));
 
- describe("PollingComponent", () => {
+describe("PollingComponent", () => {
   let store;
+  const mockDispatch = jest.fn();
   const mockPaymentDataset = {
     id: "673d09c874e7d85da2ec7fc8",
     status: "PENDING",
   };
 
+  const mockPaymentDatasetData = {
+    items: [{ id: "673d09c874e7d85da2ec7fc8", status: "PENDING" }],
+    itemsPerPage: 25,
+    pageNumber: 1,
+    totalItems: 1,
+  };
+
   beforeEach(() => {
     store = configureStore({
       reducer: {
-        [PAYMENT_DATASET_FEATURE_KEY]: paymentDatasetReducer,
+        paymentDataset: paymentDatasetReducer,
       },
       preloadedState: {
-        [PAYMENT_DATASET_FEATURE_KEY]: {
-          data: null,
+        paymentDataset: {
+          data: mockPaymentDatasetData,
           error: false,
           loading: false,
           createNewDatasetStatus: "idle",
@@ -37,52 +45,91 @@ jest.mock("../../../service/paymentdataset.service", () => ({
             pageNumber: 1,
             totalItems: 0,
           },
-          dataset: {
-            items: [],
-          },
+          dataset: mockPaymentDatasetData,
         },
       },
     });
 
+   
     getPaymentDatasetAPI.mockResolvedValueOnce({
       id: mockPaymentDataset.id,
-      status: "COMPLETED", 
+      status: "COMPLETED",
     });
   });
+
+  jest.spyOn(store, "dispatch").mockImplementation(mockDispatch);
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   it("polls the API and updates the dataset when the status is not completed or error", async () => {
-    const mockDispatch = jest.spyOn(store, "dispatch");
-
     renderWithRedux(<PollingComponent paymentDataset={mockPaymentDataset} />, { store });
 
     await act(async () => {
       await new Promise((r) => setTimeout(r, 30000));  
     });
 
+    
     expect(getPaymentDatasetAPI).toHaveBeenCalledWith(mockPaymentDataset.id);
 
-    const actions = mockDispatch.mock.calls.map(call => call[0]);
-    console.log("Dispatched actions:", actions);
-
+   
     expect(mockDispatch).toHaveBeenCalledWith(updatePendingDatasetAction({
-      items: expect.arrayContaining([expect.objectContaining({
-        id: mockPaymentDataset.id, status: "COMPLETED"
-      })]),
+      data: {
+        items: expect.arrayContaining([expect.objectContaining({
+          id: mockPaymentDataset.id,
+          status: "COMPLETED",
+        })]),
+        itemsPerPage: 25,
+        pageNumber: 1,
+        totalItems: 1,
+      },
     }));
   });
 
   it("does not poll if the status is completed or error", async () => {
+  
     const completedDataset = { ...mockPaymentDataset, status: "COMPLETED" };
+
     renderWithRedux(<PollingComponent paymentDataset={completedDataset} />, { store });
 
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 1000)); 
+      await new Promise((r) => setTimeout(r, 1000)); // Simulate a short wait
     });
 
+ 
     expect(getPaymentDatasetAPI).not.toHaveBeenCalled();
+  });
+
+  it("cancels polling when the status is completed or error", async () => {
+ 
+    const pendingDataset = { ...mockPaymentDataset, status: "PENDING" };
+
+    renderWithRedux(<PollingComponent paymentDataset={pendingDataset} />, { store });
+
+    await act(async () => {
+   
+      getPaymentDatasetAPI.mockResolvedValueOnce({
+        id: pendingDataset.id,
+        status: "COMPLETED",
+      });
+      await new Promise((r) => setTimeout(r, 30000)); 
+    });
+
+   
+    expect(mockDispatch).toHaveBeenCalledWith(updatePendingDatasetAction({
+      data: {
+        items: expect.arrayContaining([expect.objectContaining({
+          id: pendingDataset.id,
+          status: "COMPLETED",
+        })]),
+        itemsPerPage: 25,
+        pageNumber: 1,
+        totalItems: 1,
+      },
+    }));
+
+  
+    expect(getPaymentDatasetAPI).toHaveBeenCalledWith(pendingDataset.id);
   });
 });
