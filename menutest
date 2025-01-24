@@ -29,36 +29,47 @@ describe("ActionButtons", () => {
 
   it("renders correct actions based on status and pageType", () => {
     renderComponent("PAUSED", "testRun");
-    expect(screen.getByRole('menuitem', { name: /Resume/ })).toBeInTheDocument();
+    const actionsButton = screen.getByRole("button", { name: /Actions/i });
+
+    fireEvent.click(actionsButton);
+
+    expect(screen.getByRole("menuitem", { name: /Resume/i })).toBeInTheDocument();
     expect(screen.queryByText("Cancel")).toBeNull();
     expect(screen.queryByText("Pause")).toBeNull();
     expect(screen.queryByText("Re-Run")).toBeNull();
     expect(screen.queryByText("Schedule a run")).toBeNull();
 
     renderComponent("STARTED", "testRun");
-    expect(screen.getByText("Pause")).toBeInTheDocument();
-    expect(screen.getByText("Cancel")).toBeInTheDocument();
+    fireEvent.click(actionsButton);
+    expect(screen.getByRole("menuitem", { name: /Pause/i })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /Cancel/i })).toBeInTheDocument();
     expect(screen.queryByText("Resume")).toBeNull();
     expect(screen.queryByText("Re-Run")).toBeNull();
     expect(screen.queryByText("Schedule a run")).toBeNull();
 
     renderComponent("COMPLETED", "testRun");
+    fireEvent.click(actionsButton);
     expect(screen.queryByText("Pause")).toBeNull();
     expect(screen.queryByText("Cancel")).toBeNull();
     expect(screen.queryByText("Resume")).toBeNull();
-    expect(screen.getByText("Re-Run")).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /Re-Run/i })).toBeInTheDocument();
     expect(screen.queryByText("Schedule a run")).toBeNull();
 
     renderComponent("COMPLETED", "payments");
+    fireEvent.click(actionsButton);
     expect(screen.queryByText("Pause")).toBeNull();
     expect(screen.queryByText("Cancel")).toBeNull();
     expect(screen.queryByText("Resume")).toBeNull();
     expect(screen.queryByText("Re-Run")).toBeNull();
-    expect(screen.getByText("Schedule a run")).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /Schedule a run/i })).toBeInTheDocument();
   });
 
   it("does not render actions when disabled", () => {
     renderComponent("PAUSED", "testRun", true);
+    const actionsButton = screen.getByRole("button", { name: /Actions/i });
+
+    fireEvent.click(actionsButton);
+
     expect(screen.queryByText("Resume")).toBeNull();
     expect(screen.queryByText("Cancel")).toBeNull();
     expect(screen.queryByText("Pause")).toBeNull();
@@ -68,11 +79,14 @@ describe("ActionButtons", () => {
 
   it("calls onActionClick when an action is selected", () => {
     renderComponent("STARTED", "testRun");
+    const actionsButton = screen.getByRole("button", { name: /Actions/i });
 
-    fireEvent.click(screen.getByText("Pause"));
+    fireEvent.click(actionsButton);
+
+    fireEvent.click(screen.getByRole("menuitem", { name: /Pause/i }));
     expect(mockOnActionClick).toHaveBeenCalledWith("pause", mockItem);
 
-    fireEvent.click(screen.getByText("Cancel"));
+    fireEvent.click(screen.getByRole("menuitem", { name: /Cancel/i }));
     expect(mockOnActionClick).toHaveBeenCalledWith("cancel", mockItem);
   });
 });
