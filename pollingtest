@@ -13,10 +13,8 @@ jest.mock("../../../service/paymentdataset.service", () => ({
   getPaymentDatasetAPI: jest.fn(),
 }));
 
- 
-describe("PollingComponent", () => {
+ describe("PollingComponent", () => {
   let store;
-  const mockDispatch = jest.fn();
   const mockPaymentDataset = {
     id: "673d09c874e7d85da2ec7fc8",
     status: "PENDING",
@@ -50,9 +48,6 @@ describe("PollingComponent", () => {
       id: mockPaymentDataset.id,
       status: "COMPLETED", 
     });
-
- 
-    jest.spyOn(store, "dispatch").mockImplementation(mockDispatch);
   });
 
   afterEach(() => {
@@ -60,17 +55,19 @@ describe("PollingComponent", () => {
   });
 
   it("polls the API and updates the dataset when the status is not completed or error", async () => {
+    const mockDispatch = jest.spyOn(store, "dispatch");
+
     renderWithRedux(<PollingComponent paymentDataset={mockPaymentDataset} />, { store });
 
- 
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 30000)); // simulate 30 seconds waiting
+      await new Promise((r) => setTimeout(r, 30000));  
     });
 
-   
     expect(getPaymentDatasetAPI).toHaveBeenCalledWith(mockPaymentDataset.id);
 
- 
+    const actions = mockDispatch.mock.calls.map(call => call[0]);
+    console.log("Dispatched actions:", actions);
+
     expect(mockDispatch).toHaveBeenCalledWith(updatePendingDatasetAction({
       items: expect.arrayContaining([expect.objectContaining({
         id: mockPaymentDataset.id, status: "COMPLETED"
@@ -82,12 +79,10 @@ describe("PollingComponent", () => {
     const completedDataset = { ...mockPaymentDataset, status: "COMPLETED" };
     renderWithRedux(<PollingComponent paymentDataset={completedDataset} />, { store });
 
- 
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1000)); 
     });
 
- 
     expect(getPaymentDatasetAPI).not.toHaveBeenCalled();
   });
 });
