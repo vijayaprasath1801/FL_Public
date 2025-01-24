@@ -14,10 +14,9 @@ jest.mock("../../../service/paymentdataset.service", () => ({
 }));
 
  
-
 describe("PollingComponent", () => {
   let store;
- const mockDispatch = jest.fn();
+  const mockDispatch = jest.fn();
   const mockPaymentDataset = {
     id: "673d09c874e7d85da2ec7fc8",
     status: "PENDING",
@@ -49,10 +48,13 @@ describe("PollingComponent", () => {
 
     getPaymentDatasetAPI.mockResolvedValueOnce({
       id: mockPaymentDataset.id,
-      status: "COMPLETED",
+      status: "COMPLETED", 
     });
+
+ 
+    jest.spyOn(store, "dispatch").mockImplementation(mockDispatch);
   });
-  jest.spyOn(store, "dispatch").mockImplementation(mockDispatch);
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -60,23 +62,32 @@ describe("PollingComponent", () => {
   it("polls the API and updates the dataset when the status is not completed or error", async () => {
     renderWithRedux(<PollingComponent paymentDataset={mockPaymentDataset} />, { store });
 
+ 
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 30000));
+      await new Promise((r) => setTimeout(r, 30000)); // simulate 30 seconds waiting
     });
 
+   
     expect(getPaymentDatasetAPI).toHaveBeenCalledWith(mockPaymentDataset.id);
-    expect(store.getActions()).toContainEqual(updatePendingDatasetAction({
-      items: expect.arrayContaining([expect.objectContaining({ id: mockPaymentDataset.id, status: "COMPLETED" })]),
+
+ 
+    expect(mockDispatch).toHaveBeenCalledWith(updatePendingDatasetAction({
+      items: expect.arrayContaining([expect.objectContaining({
+        id: mockPaymentDataset.id, status: "COMPLETED"
+      })]),
     }));
   });
 
   it("does not poll if the status is completed or error", async () => {
     const completedDataset = { ...mockPaymentDataset, status: "COMPLETED" };
     renderWithRedux(<PollingComponent paymentDataset={completedDataset} />, { store });
+
+ 
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 1000)); // Short wait
+      await new Promise((r) => setTimeout(r, 1000)); 
     });
 
+ 
     expect(getPaymentDatasetAPI).not.toHaveBeenCalled();
   });
 });
