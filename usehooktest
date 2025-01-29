@@ -1,12 +1,13 @@
 import React from "react";
 import { render, act, screen } from "@testing-library/react";
-import { useAuth } from "react-oidc-context";
+import { OidcProvider, useAuth } from "react-oidc-context";
 import { useDispatch } from "react-redux";
 import { envActions } from "../reducers/env.reducer";
 import { useAuthHook } from "./useAuthHook";
 
 jest.mock("react-oidc-context", () => ({
   useAuth: jest.fn(),
+  hasAuthParams: jest.fn(() => false),
 }));
 
 jest.mock("react-redux", () => ({
@@ -32,14 +33,14 @@ describe("useAuthHook", () => {
     user: {
       access_token: "mockAccessToken",
       profile: {
-        sub: "mockUser Id",
+        sub: "mockUserId",
         csgroups: ["role1", "role2"],
       },
     },
     events: {
       addAccessTokenExpiring: jest.fn(),
       addAccessTokenExpired: jest.fn(),
-      remove:User  jest.fn(),
+      removeUser: jest.fn(),
       revokeTokens: jest.fn(),
       signinRedirect: jest.fn(),
     },
@@ -47,8 +48,9 @@ describe("useAuthHook", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
-    (useAuth as jest.Mock).mockReturnValue(mockAuth);
+    (useDispatch).mockReturnValue(mockDispatch);
+    (useAuth).mockReturnValue(mockAuth);
+
     sessionStorage.setItem("envConfig", JSON.stringify({ API_URL: "http://mockapi.com" }));
   });
 
@@ -60,7 +62,10 @@ describe("useAuthHook", () => {
 
     expect(screen.queryByTestId("authenticated")).toBeNull();
 
-    mockAuth.isAuthenticated = true;
+    act(() => {
+      (useAuth).mockReturnValue({ ...mockAuth, isAuthenticated: true });
+    });
+
     render(<TestComponent />);
 
     expect(screen.getByTestId("authenticated")).toBeInTheDocument();
