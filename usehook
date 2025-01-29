@@ -1,0 +1,55 @@
+import React, { useEffect, useState) from "react"; 
+Import (hasAuthParams, useAuth } from "react-oidc-context"; 
+import { useDispatch } from "react-redux"; 
+import { envActions } from "../reducers/env.reducer"; T 
+export const useAuthHook = () 
+const auth useAuth(); 
+const dispatch useDispatch(); 
+const [panelopen, setPanelopen] useState(false); 
+Sal Chaman Krishnagiri, 3 eonths ago - ΑΣΤ 
+const env = JSON.stringify(sessionStorage.getItem('envConfig') ?? '{}')?.currentValue; 
+const updateSessionStorage = (auth) => { 
+if ( 
+auth.user 
+){ 
+// dispatch(getUserEntitlementData(auth.user)); 
+sessionStorage.setItem("accessToken", auth.user.access_token); 
+sessionStorage.setItem("userId", auth.user.profile.sub); 
+sessionStorage.setItem("userInfo", JSON.stringify(auth.user)); 
+sessionStorage.setItem("roles", auth.user.profile.csgroups); 
+useEffect(() => { 
+if (env?.API_URL) { 
+dispatch(envActions.setApiUrl(env.API_URL)); 
+} 
+), [env, dispatch]); 
+useEffect(() => { 
+return auth.events.addAccessTokenExpiring(() => { 
+setPanel0pen(true); 
+}); 
+Tauth.events, auth.sieninSilent]):
+useEffect(() => { 
+return auth.events.addAccessTokenExpired(async () => { 
+if (auth.user) { 
+await auth.removeUser(); 
+await auth.revokeTokens(["refresh_token"]); 
+await auth.signoutRedirect(); 
+}); 
+}, [auth, auth.events, auth.signinSilent]); 
+useEffect(() => { 
+if ( 
+!hasAuthParams() && 
+lauth.isAuthenticated && lauth.activeNavigator && 
+lauth.isLoading 
+) { 
+auth.signinRedirect(); 
+} 
+auth, 
+auth.isAuthenticated, 
+auth.activeNavigator, 
+auth.isLoading, auth.signinRedirect, 
+1); 
+useEffect(() => { 
+updateSessionStorage(auth) 
+}, [auth]); 
+return {auth, env, panelopen, setPanelopen }
+}
