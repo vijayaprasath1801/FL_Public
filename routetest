@@ -1,0 +1,60 @@
+import React, { Suspense } from "react";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import * as Routes from "../index";
+
+// Mock the lazy-loaded components
+jest.mock("../pages/home", () => () => <div data-testid="home">Home Page</div>);
+jest.mock("../pages/payments", () => () => <div data-testid="payments">Payments Page</div>);
+jest.mock("../pages/payments/add-payment-dataset", () => () => <div data-testid="add-payments">Add Payments Dataset</div>);
+jest.mock("../pages/payment-executions/initiate-run", () => () => <div data-testid="initiate-run">Initiate Run</div>);
+jest.mock("../pages/payment-executions", () => () => <div data-testid="payment-executions">Payment Executions</div>);
+jest.mock("../pages/payment-comparison", () => () => <div data-testid="payment-comparison">Payment Comparison</div>);
+jest.mock("../pages/runId-summary", () => () => <div data-testid="run-id-summary">Run ID Summary</div>);
+jest.mock("../pages/payments/payment-dataset-details", () => () => <div data-testid="payment-dataset-details">Payment Dataset Details</div>);
+
+describe("Lazy Loaded Routes", () => {
+  const renderComponent = async (Component, testId) => {
+    render(
+      <Suspense fallback={<div>Loading...</div>}>
+        <Component />
+      </Suspense>
+    );
+
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+
+    return await screen.findByTestId(testId);
+  };
+
+  it("renders Home component", async () => {
+    expect(await renderComponent(Routes.Home, "home")).toBeInTheDocument();
+  });
+
+  it("renders Payments component", async () => {
+    expect(await renderComponent(Routes.Payments, "payments")).toBeInTheDocument();
+  });
+
+  it("renders AddPaymentsDataset component", async () => {
+    expect(await renderComponent(Routes.AddPaymentsDataset, "add-payments")).toBeInTheDocument();
+  });
+
+  it("renders InitiateRun component", async () => {
+    expect(await renderComponent(Routes.InitiateRun, "initiate-run")).toBeInTheDocument();
+  });
+
+  it("renders PaymentExecutions component", async () => {
+    expect(await renderComponent(Routes.PaymentExecutions, "payment-executions")).toBeInTheDocument();
+  });
+
+  it("renders PaymentComparison component", async () => {
+    expect(await renderComponent(Routes.PaymentComparison, "payment-comparison")).toBeInTheDocument();
+  });
+
+  it("renders RunIdSummary component", async () => {
+    expect(await renderComponent(Routes.RunIdSummary, "run-id-summary")).toBeInTheDocument();
+  });
+
+  it("renders PaymentDatasetDetails component", async () => {
+    expect(await renderComponent(Routes.PaymentDatasetDetails, "payment-dataset-details")).toBeInTheDocument();
+  });
+});
