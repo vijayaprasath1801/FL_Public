@@ -1,0 +1,82 @@
+import { renderHook, act } from "@testing-library/react";
+import { useAuthHook } from "../hooks/useAuthHook";
+import { useAuth } from "react-oidc-context";
+import { useDispatch } from "react-redux";
+import { envActions } from "../reducers/env.reducer";
+
+jest.mock("react-oidc-context", () => ({
+  useAuth: jest.fn(),
+  hasAuthParams: jest.fn().mockReturnValue(false),
+}));
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn(),
+}));
+
+describe("useAuthHook", () => {
+  let mockAuth;
+  let mockDispatch;
+
+  beforeEach(() => {
+    mockDispatch = jest.fn();
+    useDispatch.mockReturnValue(mockDispatch);
+
+    mockAuth = {
+      user: {
+        access_token: "mockAccessToken",
+        profile: { sub: "mockUserId", csgroups: ["admin"] },
+      },
+      events: {
+        addAccessTokenExpiring: jest.fn((callback) => callback()),
+        addAccessTokenExpired: jest.fn((callback) => callback()),
+      },
+      signinSilent: jest.fn(),
+      removeUser: jest.fn(),
+      revokeTokens: jest.fn(),
+      signoutRedirect: jest.fn(),
+      signinRedirect: jest.fn(),
+      isAuthenticated: true,
+      activeNavigator: false,
+      isLoading: false,
+    };
+    useAuth.mockReturnValue(mockAuth);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    sessionStorage.clear();
+  });
+
+  it("should update session storage when user is authenticated", () => {
+    renderHook(() => useAuthHook());
+    expect(sessionStorage.getItem("accessToken")).toBe("mockAccessToken");
+    expect(sessionStorage.getItem("userId")).toBe("mockUserId");
+    expect(sessionStorage.getItem("roles")).toBe(JSON.stringify(["admin"]));
+  });
+
+  it("should dispatch API_URL if present in session storage", () => {
+    sessionStorage.setItem("envConfig", JSON.stringify({ API_URL: "https://mockapi.com" }));
+    renderHook(() => useAuthHook());
+    expect(mockDispatch).toHaveBeenCalledWith(envActions.setApiUrl("https://mockapi.com"));
+  });
+
+  it("should handle access token expiring event", () => {
+    const { result } = renderHook(() => useAuthHook());
+    expect(result.current.panelopen).toBe(true);
+  });
+
+  it("should handle access token expired event by revoking tokens and signing out", async () => {
+    await act(async () => {
+      renderHook(() => useAuthHook());
+    });
+    expect(mockAuth.removeUser).toHaveBeenCalled();
+    expect(mockAuth.revokeTokens).toHaveBeenCalledWith(["refresh_token"]);
+    expect(mockAuth.signoutRedirect).toHaveBeenCalled();
+  });
+
+  it("should trigger sign-in redirect when conditions are met", () => {
+    mockAuth.isAuthenticated = false;
+    renderHook(() => useAuthHook());
+    expect(mockAuth.signinRedirect).toHaveBeenCalled();
+  });
+});
