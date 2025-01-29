@@ -1,114 +1,56 @@
-import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
-import ActionButtons from "../ActionButtons";  // Adjust the path accordingly
+import React, {act } from "react"; 
+import { render, fireEvent, screen, waitFor, cleanup } from "@testing-library/react"; 
+import ActionButtons from "./ActionButtons"; 
+global.ResizeObserver jest.fn().mockImplementation(() => ({ 
+observe: jest.fn(), 
+unobserve: jest.fn(), 
+disconnect: jest.fn(), 
+})) 
+describe("ActionButtons", () => { 
+const mockOnActionClick jest.fn(); 
+const mockItem = { 
+paymentsCount: 1, 
+}; 
+const renderComponent = (status, pageType, disabled = false) => { 
+render( 
+<ActionButtons 
+status={status) 
+onActionClick-mockOnActionClick) 
+disabled-(disabled) 
+item-(mockItem} 
+pageType-(pageType) 
+); 
+]; 
+beforeEach(() => { 
+mockOnActionClick.mockClear(); 
+});
 
-describe("ActionButtons", () => {
-  const mockOnActionClick = jest.fn();
-
-  const mockItem = {
-    payment: {
-      sCount: 1,
-    },
-  };
-
-  const renderComponent = (status, pageType, disabled = false) => {
-    render(
-      <ActionButtons
-        status={status}
-        onActionClick={mockOnActionClick}
-        disabled={disabled}
-        item={mockItem}
-        pageType={pageType}
-      />
-    );
-  };
-
-  beforeEach(() => {
-    mockOnActionClick.mockClear();
-  });
-  it("renders 'Pause' action for 'STARTED' status", async () => {
-    renderComponent("STARTED", "testRun");
-
-  
-    fireEvent.mouseDown(screen.getByRole("button", { name: /Actions/i }));
-
- 
-    await waitFor(() => {
-      expect(screen.getByRole("menuitem", { name: /Pause/i })).toBeInTheDocument();
-    });
-  });
-
-  it("renders 'Cancel' action for 'STARTED' status", async () => {
-    renderComponent("STARTED", "testRun");
-
- 
-    fireEvent.mouseDown(screen.getByRole("button", { name: /Actions/i }));
-
-   
-    await waitFor(() => {
-      expect(screen.getByRole("menuitem", { name: /Cancel/i })).toBeInTheDocument();
-    });
-  });
-
-  it("renders 'Resume' action for 'PAUSED' status", async () => {
-    renderComponent("PAUSED", "testRun");
-
-  
-    fireEvent.mouseDown(screen.getByRole("button", { name: /Actions/i }));
-
- 
-    await waitFor(() => {
-      expect(screen.getByRole("menuitem", { name: /Resume/i })).toBeInTheDocument();
-    });
-  });
-
-  it("renders 'Re-Run' action for 'COMPLETED' status", async () => {
-    renderComponent("COMPLETED", "testRun");
-
-  
-    fireEvent.mouseDown(screen.getByRole("button", { name: /Actions/i }));
-
-  
-    await waitFor(() => {
-      expect(screen.getByRole("menuitem", { name: /Re-Run/i })).toBeInTheDocument();
-    });
-  });
-
-  it("does not render actions when disabled", async () => {
-    renderComponent("PAUSED", "testRun");
-
- 
-    fireEvent.mouseDown(screen.getByRole("button", { name: /Actions/i }));
-
-  
-    await waitFor(() => {
-      expect(screen.queryByRole("menuitem", { name: /Resume/i })).toBeNull();
-      expect(screen.queryByRole("menuitem", { name: /Pause/i })).toBeNull();
-      expect(screen.queryByRole("menuitem", { name: /Cancel/i })).toBeNull();
-      expect(screen.queryByRole("menuitem", { name: /Re-Run/i })).toBeNull();
-    });
-  });
-
-  it("calls onActionClick when an action is selected", async () => {
-    renderComponent("STARTED", "testRun");
-
-   
-    fireEvent.mouseDown(screen.getByRole("button", { name: /Actions/i }));
-
- 
-    await waitFor(() => {
-      fireEvent.click(screen.getByRole("menuitem", { name: /Pause/i }));
-    });
-
- 
-    expect(mockOnActionClick).toHaveBeenCalledWith("pause", mockItem);
-
-  
-    await waitFor(() => {
-      fireEvent.click(screen.getByRole("menuitem", { name: /Cancel/i }));
-    });
-
- 
-    expect(mockOnActionClick).toHaveBeenCalledWith("cancel", mockItem);
-  });
+it("renders correct actions based on status and pageType", async() => { 
+cleanup(); 
+renderComponent("PAUSED", "testRun"); 
+let actionsButton = screen.getByRole("button", { name: /Actions/1 }); 
+fireEvent.click(actionsButton); 
+await act(async () => { await new Promise((r) > setTimeout(r, 0)) }); 
+expect(screen.getByRole("button", { name: /Resume/1})).toBeInTheDocument(); 
+expect(screen.queryByText("Cancel")).toBeNull(); 
+cleanup(); 
+renderComponent("RESUMED", "testRun"); 
+actionsButton screen.getByRole("button", (name: /Actions/i]); 
+fireEvent.click(actionsButton); 
+await act(async () => ( await new Promise((r) -> setTimeout(r, 0)) )); 
+await waitFor(()->{ 
+expect(screen.getByRole("button", { name: /Pause/1))).toBeInTheDocument(); }) 
+cleanup(); 
+renderComponent("COMPLETED", "testRun"); 
+actionsButton screen.getByRole("button", (name: /Actions/1}); 
+fireEvent.click(actionsButton); 
+await act(async () => { await new Promise((r) -> setTimeout(r, 0)) }); 
+expect(screen.getByRole("button", { name: /Re-Run/1})).toBe In The Document(); 
+cleanup(); 
+renderComponent("COMPLETED", "payments"); 
+actionsButton = screen.getByRole("button", { name: /Actions/i }); 
+fireEvent.click(actionsButton); 
+await act(async () -> (await new Promise((r) -> setTimeout(r, 0)) )); 
+expect(screen.getByRole("button", { name: /Schedule a run/i})).toBeInTheDocument(); 
+cleanup(); 
 });
