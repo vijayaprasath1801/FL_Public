@@ -51,72 +51,10 @@ describe("RunIdSummary Component Tests", () => {
   });
 
   it("renders table with data for Mismatch Payments", async () => {
-    getRunSummaryAPI.mockResolvedValueOnce({
-      items: [
-        {
-          runId: "67210f75e5a58fcf4b2f4929",
-          datasetName: "IISI_Oct_21_2024_2",
-          startTime: "2024-10-21T10:06:30.34",
-          endTime: null,
-          chunkSize: 500,
-          pauseInterval: null,
-          status: "STARTED",
-          paymentExecutionResult: {
-            totalItems: 1,
-            pageNumber: 1,
-            itemsPerPage: 25,
-          },
-        },
-      ],
-    });
-
-    useParams.mockReturnValue({ paymentTestRunId: '673d09c874e7d05da2ec7fc0' });
-
-    renderWithRedux(<RunIdSummary />, { store });
-
-    await act(async () => await new Promise((r) => setTimeout(r, 0)));
-
-    // Check if the run ID is rendered
-    expect(screen.getByText("67210f75e5a58fcf4b2f4929")).toBeInTheDocument();
-
-    // Check if the Mismatch Payments section is rendered
-    expect(screen.getByText("Mismatch Payments")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Select/i })).toBeInTheDocument();
-    expect(screen.getByText("Number Of Payments Mismatched")).toBeInTheDocument();
-  });
-
-  it("renders empty table when no data is returned for Mismatch Payments", async () => {
-    getRunSummaryAPI.mockResolvedValueOnce(null);
-    useParams.mockReturnValue({ paymentTestRunId: '673d09c874e7d05da2ec7fc0' });
-
-    renderWithRedux(<RunIdSummary />, { store });
-
-    await act(async () => await new Promise((r) => setTimeout(r, 0)));
-
-    // Check that the Mismatch Payments section is rendered but has no data
-    expect(screen.getByText("Mismatch Payments")).toBeInTheDocument();
-    expect(screen.queryByText("Number Of Payments Mismatched")).toBeNull();
-  });
-
-  it("shows error feedback when there is an error", async () => {
-    getRunSummaryAPI.mockRejectedValueOnce(new Error('API Error'));
-    useParams.mockReturnValue({ paymentTestRunId: '673d09c874e7d05da2ec7fc0' });
-
-    renderWithRedux(<RunIdSummary />, { store });
-
-    await act(async () => await new Promise((r) => setTimeout(r, 0)));
-
-    expect(screen.getByText("API Error")).toBeInTheDocument();
-  });
-
-  it("renders table with data for Mismatch by Tags", async () => {
-    const mockData = {
-      mismatchByTagData: [
-        { tagName: "Tag1", mismatchCounts: 5 },
-        { tagName: "Tag2", mismatchCounts: 3 },
-      ],
-      mismatchByPaymentType: [],
-    };
+    const mockPaymentData = [
+      { paymentType: "Payment1", mismatchCounts: 5 },
+      { paymentType: "Payment2", mismatchCounts: 3 },
+    ];
 
     getRunSummaryAPI.mockResolvedValueOnce({
       items: [
@@ -145,12 +83,104 @@ describe("RunIdSummary Component Tests", () => {
       },
       preloadedState: {
         [RUN_DATASET_FEATURE_KEY]: {
-          ...mockData,
+          mismatchByTagData: [],
+          mismatchByPaymentType: mockPaymentData,
+          totalNumOfPayments: 1,
+          runId: "67210f75e5a58fcf4b2f4929",
+          datasetName: "IISI_Oct_21_2024_2",
+          startTime: "2024-10-21T10:06:30.34",
+          endTime: null,
+          totalNumberOfMismatches: 0,
+          misMatchPercentage: null,
+          error: null,
+          loading: false,
+        },
+      },
+    });
+
+    renderWithRedux(<RunIdSummary />, { store });
+
+    await act(async () => await new Promise((r) => setTimeout(r, 0)));
+
+    // Check if the run ID is rendered
+    expect(screen.getByText("67210f75e5a58fcf4b2f4929")).toBeInTheDocument();
+
+    // Check if the Mismatch Payments section is rendered
+    expect(screen.getByText("Mismatch Payments")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Select/i })).toBeInTheDocument();
+    expect(screen.getByText("Number Of Payments Mismatched")).toBeInTheDocument();
+    expect(screen.getByText("Payment1")).toBeInTheDocument();
+    expect(screen.getByText("5")).toBeInTheDocument();
+    expect(screen.getByText("Payment2")).toBeInTheDocument();
+    expect(screen.getByText("3")).toBeInTheDocument();
+  });
+
+  it("renders empty table when no data is returned for Mismatch Payments", async () => {
+    getRunSummaryAPI.mockResolvedValueOnce({
+      items: [],
+    });
+    useParams.mockReturnValue({ paymentTestRunId: '673d09c874e7d05da2ec7fc0' });
+
+    renderWithRedux(<RunIdSummary />, { store });
+
+    await act(async () => await new Promise((r) => setTimeout(r, 0)));
+
+    // Check that the Mismatch Payments section is rendered but has no data
+    expect(screen.getByText("Mismatch Payments")).toBeInTheDocument();
+    expect(screen.queryByText("Number Of Payments Mismatched")).toBeNull();
+  });
+
+  it("shows error feedback when there is an error", async () => {
+    getRunSummaryAPI.mockRejectedValueOnce(new Error('API Error'));
+    useParams.mockReturnValue({ paymentTestRunId: '673d09c874e7d05da2ec7fc0' });
+
+    renderWithRedux(<RunIdSummary />, { store });
+
+    await act(async () => await new Promise((r) => setTimeout(r, 0)));
+
+    expect(screen.getByText("API Error")).toBeInTheDocument();
+  });
+
+  it("renders table with data for Mismatch by Tags", async () => {
+    const mockTagData = [
+      { tagName: "Tag1", mismatchCounts: 5 },
+      { tagName: "Tag2", mismatchCounts: 3 },
+    ];
+
+    getRunSummaryAPI.mockResolvedValueOnce({
+      items: [
+        {
+          runId: "67210f75e5a58fcf4b2f4929",
+          datasetName: "IISI_Oct_21_2024_2",
+          startTime: "2024-10-21T10:06:30.34",
+          endTime: null,
+          chunkSize: 500,
+          pauseInterval: null,
+          status: "STARTED",
+          paymentExecutionResult: {
+            totalItems: 1,
+            pageNumber: 1,
+            itemsPerPage: 25,
+          },
+        },
+      ],
+    });
+
+    useParams.mockReturnValue({ paymentTestRunId: '673d09c874e7d05da2ec7fc0' });
+
+    store = configureStore({
+      reducer: {
+        [RUN_DATASET_FEATURE_KEY]: runDatasetReducer,
+      },
+      preloadedState: {
+        [RUN_DATASET_FEATURE_KEY]: {
+          mismatchByTagData: mockTagData,
+          mismatchByPaymentType: [],
           totalNumOfPayments: 0,
-          runId: "",
-          datasetName: "",
-          startTime: "",
-          endTime: "",
+          runId: "67210f75e5a58fcf4b2f4929",
+          datasetName: "IISI_Oct_21_2024_2",
+          startTime: "2024-10-21T10:06:30.34",
+          endTime: null,
           totalNumberOfMismatches: 0,
           misMatchPercentage: null,
           error: null,
@@ -171,7 +201,9 @@ describe("RunIdSummary Component Tests", () => {
   });
 
   it("renders empty table when no data is returned for Mismatch by Tags", async () => {
-    getRunSummaryAPI.mockResolvedValueOnce(null);
+    getRunSummaryAPI.mockResolvedValueOnce({
+      items: [],
+    });
     useParams.mockReturnValue({ paymentTestRunId: '673d09c874e7d05da2ec7fc0' });
 
     renderWithRedux(<RunIdSummary />, { store });
@@ -180,35 +212,5 @@ describe("RunIdSummary Component Tests", () => {
 
     expect(screen.getByText("Mismatch by Tags")).toBeInTheDocument();
     expect(screen.queryByText("Tag1")).toBeNull();
-  });
-
-  it("renders table with data for Mismatch Payments when data is loaded", async () => {
-    getRunSummaryAPI.mockResolvedValueOnce({
-      items: [
-        {
-          runId: "67210f75e5a58fcf4b2f4929",
-          datasetName: "IISI_Oct_21_2024_2",
-          startTime: "2024-10-21T10:06:30.34",
-          endTime: null,
-          chunkSize: 500,
-          pauseInterval: null,
-          status: "STARTED",
-          paymentExecutionResult: {
-            totalItems: 10,
-            pageNumber: 1,
-            itemsPerPage: 25,
-          },
-        },
-      ],
-    });
-
-    useParams.mockReturnValue({ paymentTestRunId: '673d09c874e7d05da2ec7fc0' });
-
-    renderWithRedux(<RunIdSummary />, { store });
-
-    await act(async () => await new Promise((r) => setTimeout(r, 0)));
-
-    expect(screen.getByText("Mismatch Payments")).toBeInTheDocument();
-    expect(screen.getByText("10")).toBeInTheDocument();
   });
 });
