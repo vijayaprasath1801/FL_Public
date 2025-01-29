@@ -1,0 +1,195 @@
+const RunIdSummary = () => { 
+const dispatch useDispatch(); 
+const { payment TestRunId) = useParams(); 
+k137468, 3 months ago SHMX-2288 Fixed U1 Ch 
+const {mismatchByTagData, 
+mismatchByPayment Type, 
+totalNumOfPayments, 
+runId, 
+datasetName, 
+startTime, 
+endTime, 
+totalNumberOfMismatches, 
+misMatchPercentage, 
+error, loading) = useSelector(getRunDatasetState); 
+const [state, setState] useState({ 
+}); 
+const linkRenderer itemType => ( 
+<NavLink 
+style={{ display: inline-flex' }} 
+to-({ 
+pathname: /payment-comparison/$(runId}/${datasetName}", 
+name: 
+}} 
+tabIndex-'-1' 
+key=(itemType) 
+[itemType) 
+</NavLink> 
+)
+
+const columns - [ 
+key: "tagName", 
+label: "Mismatch Field/Tag' 
+align: "left", 
+className: 'columnWidth', 
+{ 
+key: "mismatchCounts", 
+label: "Number Of Payments mismatched", 
+align: "left", 
+className: 'columnWidth' 
+];
+
+const columnsPaymentMismatch = [ 
+{ 
+key: "paymentType", 
+label: "Payment ID: UAT-Parallel", 
+align: "left", 
+className: 'columnWidth", 
+formatter: ((item)) => linkRenderer (item.paymentType) 
+key: "mismatchCounts", 
+label: "Number of Tag/Field mismatches", 
+align: "left", 
+className: 'columnWidth"
+}
+]
+const handlePageChange (pageNumber, itemsPerPage) => { 
+setState({ 
+...state, 
+itemsPerPage: itemsPerPage, 
+pageNumber: pageNumber 
+}); 
+); 
+const { pageNumber, itemsPerPage) = state; 
+const mySpacing = { 
+top: 1, 
+bottom: 2, 
+}; 
+useEffect(() -> 
+k137468, 3 months ago SHHX-2288 Fixed UL Changes 
+dispatch(fetchRunSummaryAction({ paymentTestRunId))); 
+[paymentTestRunId]);
+
+return 
+Dutta, 3 months ago SHHX-2296 темs development for run Ed summary pa 
+<Container display="block"> 
+<div id="runIdSummary" style=((marginLeft: '2rem"}}> 
+<div className="runInfoDiv"> 
+<h2> 
+Run ID Summary 
+</h2> 
+<Container display="block" spacing-(mySpacing)> 
+<Flexgrid columnGap (1) spacing={t: 1 }}> 
+<FlexgridItem span=(12)> 
+<Flexgrid> 
+<FlexgridItem span-(4)> 
+<h4>Total Number of Payments:&nbsp;&nbsp; (totalNumOfPayments]</h4> 
+</FlexgridItem> 
+<FlexgridItem span=(4)> 
+<h4>Start:&nbsp;&nbsp; (startTime)</h4> 
+</FlexgridItem> 
+<FlexgridItem span=(4)> 
+<NavLink 
+style={{ 
+display: inline-flex', 
+fontweight: normal", 
+fontSize: '1.25rem', 
+lineHeight: 1.65rem', 
+marginBottom: "1rem" 
+}} 
+tabIndex="-1" 
+to={{ 
+pathname: "/payment-executions", 
+name: 
+}}
+/>
+Run:&nbsp;&nbsp; (runId) 
+</NavLink> 
+</FlexgridItem> 
+</Flexgrid> 
+<Flexgrid > 
+<FlexgridItem span={4}> 
+<h4>Total Number of Mismatches:&nbsp;&nbsp; (totalNumberOfMismatches)</h4> 
+</FlexgridItem> 
+<FlexgridItem span=(4)> 
+<h4>End:&nbsp;&nbsp; (endTime}</h4> 
+</FlexgridItem> 
+<FlexgridItem span-(4)> 
+<NavLink 
+style={{ 
+display: inline-flex", 
+fontweight: 'normal', 
+fontSize: 1.25rem', 
+lineHeight: 1.65rem', 
+marginBottom: 'irem' 
+}} 
+tabIndex-'-1' 
+to={{ 
+pathname: "/payments", 
+name: 
+}} 
+Dataset Name :&nbsp;&nbsp; [datasetName] 
+</NavLink> 
+</FlexgridItem> 
+</Flexgrid>
+
+</FlexgridItem> 
+</Flexgrid> 
+</Container> 
+</div> 
+<div className="table-container-summary"> 
+<Section 
+title="Mismatch Payments' 
+headingLevel-h4' 
+defaultExpanded 
+style={{ border: 1px solid var(--pnr-neutral30' }} 
+[/* <h2>Mismatch Payments Table</h2> */) 
+<Flexgrid columnGap=(1) spacing={{t: 1, 1: 1, b: 2 }}> 
+<FlexgridItem span=(12) style-({justifyContent: 'end' display: flex'}}> 
+<MenuButton 
+width=(200) 
+label="Select" 
+kind="standard" 
+updateLabelOnItemSelection 
+onSelectedValueChange-[(value)-> handleActionValueChange (value, item)] 
+<MenuItem value="all">All</MenuItem> 
+<MenuItem value="diffPmt">Mismatched payments</MenuItem> 
+</MenuButton> 
+</FlexgridItem> 
+</Flexgrid> 
+
+<PaginatedTable 
+loading (false) 
+tableColumns={columnsPaymentMismatch] 
+isSelectable-(false) 
+rowkey=("id") 
+data=(mismatchByPaymentType) 
+pageNumber=(pageNumber) 
+itemsPerPage={itemsPerPage) 
+onPagination-(handlePageChange) 
+/> 
+</Section> 
+</div> 
+<div className="table-container-summary"> 
+<Section 
+title='Mismatch by Tags 
+headingLevel='h4' 
+defaultExpanded 
+style={{ border: 1px solid var(--pnr-neutral30' }} 
+{/* <h2>Mismatch by Tags Frequency Table</h2> */} 
+<PaginatedTable 
+loading-(false) 
+tableColumns=(columns) 
+isSelectable-(false) 
+rowKey-("id") 
+data-(mismatchByTagData) 
+pageNumber=(pageNumber) 
+itemsPerPage={itemsPerPage) 
+onPagination=-(handlePageChange) 
+18 
+</Section> 
+</div> 
+</div>
+</Container> 
+}; 
+export default RunIdSummary;
+
