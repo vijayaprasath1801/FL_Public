@@ -124,3 +124,18 @@ const filteredDifferences = paymentDifferences
               : 'checkbox-default'
           }`}
 
+
+const filteredDifferences = paymentDifferences.map((diff) => {
+  const { differences } = diff;
+
+  if (!differences || typeof differences !== "object") return diff;
+
+  const newDifferences = Object.entries(differences).reduce((acc, [key, item]) => {
+    acc[key] = checkedDiffs[item.type] ? item : { ...item, type: null };  
+    return acc;
+  }, {});
+
+  return { ...diff, differences: newDifferences }; 
+});
+
+
