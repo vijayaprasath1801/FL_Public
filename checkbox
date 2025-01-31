@@ -1,0 +1,56 @@
+const [checkedDiffs, setCheckedDiffs] = useState<{ [key: string]: boolean }>(() =>
+  Object.keys(diffType).reduce((acc, key) => {
+    acc[key] = true; // Default all checkboxes to checked
+    return acc;
+  }, {} as { [key: string]: boolean })
+);
+
+const handleCheckboxChange = (key: string) => {
+  setCheckedDiffs((prev) => ({
+    ...prev,
+    [key]: !prev[key], // Toggle checked state
+  }));
+};
+
+const filteredDifferences = paymentDifferences?.filter((diff) =>
+  Object.keys(diffType).some((key) => checkedDiffs[key] && diffType[key] === diff.type)
+);
+
+return (
+  {floading && filteredDifferences?.length > 0 && (
+    filteredDifferences.map((diff, index) => (
+      <Container display="block" spacing={mySpacing} key={`${index}_container_key`}>
+        <Flexgrid>
+          <FlexgridItem span={12}>
+            <div className="legendContainer">
+              {Object.keys(diffType).map((key) => (
+                <Checkbox
+                  key={key}
+                  label={key}
+                  checked={checkedDiffs[key]}
+                  onChange={() => handleCheckboxChange(key)}
+                />
+              ))}
+            </div>
+          </FlexgridItem>
+        </Flexgrid>
+        <Flexgrid className="xmlContainer" columnGap={4} spacing={{ t: 2, l: 18 }}>
+          <FlexgridItem spacing={{ t: 2 }} span={10}>
+            <Flexgrid columnGap={6} rowGap={3}>
+              <FlexgridItem className="xmlContainerLeft" span={6} spacing={{ t: 1, l: 4 }}>
+                <h3>Payment into EMTS (Raw format)</h3>
+                {diff?.expectedMessage &&
+                  renderXmlWithHighlights(parseXml(diff.expectedMessage.message), 'left', diff.differences)}
+              </FlexgridItem>
+              <FlexgridItem span={6} spacing={{ t: 1, l: 8 }}>
+                <h3>Payment into EPE (Raw format)</h3>
+                {diff?.actualMessage &&
+                  renderXmlWithHighlights(parseXml(diff.actualMessage.message), 'right', diff.differences)}
+              </FlexgridItem>
+            </Flexgrid>
+          </FlexgridItem>
+        </Flexgrid>
+      </Container>
+    ))
+  )}
+);
