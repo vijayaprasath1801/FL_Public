@@ -54,3 +54,29 @@ return (
     ))
   )}
 );
+
+
+
+
+const PaymentDifferencesComponent = ({ paymentDifferences }) => {
+  const [checkedDiffs, setCheckedDiffs] = useState({
+    1: true,
+    2: true,
+    3: true
+  });
+
+  const handleCheckboxChange = (type) => {
+    setCheckedDiffs((prev) => ({
+      ...prev,
+      [type]: !prev[type]  
+    }));
+  };
+
+  const filteredDifferences = paymentDifferences
+    .map((diff) => {
+      const newDifferences = diff.differences?.filter(
+        (difference) => checkedDiffs[difference.type] 
+      );
+      return { ...diff, differences: newDifferences };
+    })
+    .filter((diff) => diff.differences.length > 0); 
