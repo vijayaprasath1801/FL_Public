@@ -72,11 +72,21 @@ const PaymentDifferencesComponent = ({ paymentDifferences }) => {
     }));
   };
 
-  const filteredDifferences = paymentDifferences
-    .map((diff) => {
-      const newDifferences = diff.differences?.filter(
-        (difference) => checkedDiffs[difference.type] 
-      );
-      return { ...diff, differences: newDifferences };
-    })
-    .filter((diff) => diff.differences.length > 0); 
+const filteredDifferences = paymentDifferences
+  .map((diff) => {
+    const { differences } = diff;
+    if (!differences || typeof differences !== "object") return diff;
+    const newDifferences = Object.entries(differences)
+      .filter(([_, difference]) => checkedDiffs[difference.type])
+      .reduce((acc, [key, item]) => {
+        acc[key] = item; 
+        return acc;
+      }, {});
+
+    return Object.keys(newDifferences).length > 0
+      ? { ...diff, differences: newDifferences }
+      : null; 
+  })
+  .filter(Boolean);  
+
+
