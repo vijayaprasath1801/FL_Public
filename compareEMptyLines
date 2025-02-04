@@ -1,0 +1,45 @@
+<Flexgrid columnGap={6} rowGap={3}>
+  {/* Left Side: Expected Message */}
+  <FlexgridItem className="xmlContainerLeft" span={6} spacing={{ t: 1, l: 4 }}>
+    <h3>Payment into EMTS (Raw format)</h3>
+    {Object.entries(diff.differences).map(([path, item]) => {
+      const leftHeight = item.type === 2 ? document.getElementById(`left-${path}`)?.clientHeight : null;
+      return (
+        <FlexgridItem id={`left-${path}`} span={12} spacing={{ b: 2 }}>
+          {renderNodeXML(parseXml(diff.expectedMessage.message), path, item.type)}
+          {item.type === 2 && (
+            <style>
+              {`
+                #right-${path} {
+                  height: ${leftHeight}px;
+                }
+              `}
+            </style>
+          )}
+        </FlexgridItem>
+      );
+    })}
+  </FlexgridItem>
+
+  {/* Right Side: Actual Message */}
+  <FlexgridItem span={6} spacing={{ t: 1, l: 8 }}>
+    <h3>Payment into EPE (Raw format)</h3>
+    {Object.entries(diff.differences).map(([path, item]) => {
+      const rightHeight = item.type === 1 ? document.getElementById(`right-${path}`)?.clientHeight : null;
+      return (
+        <FlexgridItem id={`right-${path}`} span={12} spacing={{ b: 2 }}>
+          {renderNodeXML(parseXml(diff.actualMessage.message), path, item.type)}
+          {item.type === 1 && (
+            <style>
+              {`
+                #left-${path} {
+                  height: ${rightHeight}px;
+                }
+              `}
+            </style>
+          )}
+        </FlexgridItem>
+      );
+    })}
+  </FlexgridItem>
+</Flexgrid>
