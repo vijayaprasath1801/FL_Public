@@ -84,3 +84,8 @@ const filteredDifferences = paymentDifferences.map((diff) => {
     Object.values(diff.differences).map((item, index) =>
       item.leftMessage ? renderXmlWithHighlights(parseXml(item.leftMessage), "left", diff.differences) : null
     )}
+
+Object.entries(filteredDifferences).map(([key, item]) => {
+    const xpathVal = key.replace(regExp, '');
+    return renderNodeXML(xmlDoc, xpathVal, indentLevel);
+  }
