@@ -74,3 +74,29 @@
   </FlexgridItem>
 </Flexgrid>
 
+
+  const [leftHeights, setLeftHeights] = useState({});
+  const [rightHeights, setRightHeights] = useState({});
+
+  useEffect(() => {
+    const newLeftHeights = {};
+    const newRightHeights = {};
+
+    Object.entries(diff.differences).forEach(([path, item]) => {
+      if (item.type === 2) {
+        const leftElement = document.getElementById(`left-${path}`);
+        if (leftElement) {
+          newLeftHeights[path] = leftElement.clientHeight;
+        }
+      }
+      if (item.type === 1) {
+        const rightElement = document.getElementById(`right-${path}`);
+        if (rightElement) {
+          newRightHeights[path] = rightElement.clientHeight;
+        }
+      }
+    });
+
+    setLeftHeights(newLeftHeights);
+    setRightHeights(newRightHeights);
+  }, [diff]);
