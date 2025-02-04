@@ -39,3 +39,43 @@ style({ accentColor: legendColors [key] })
 ) 225 
 )
 
+
+const filteredDifferences = paymentDifferences.map((diff) => {
+  const { differences } = diff;
+
+  if (!differences || typeof differences !== "object") return diff;
+
+  const newDifferences = Object.entries(differences).reduce((acc, [key, item]) => {
+    // Exclude unchecked differences
+    if (!checkedDiffs[item.type]) {
+      acc[key] = { ...item, type: null };
+      return acc;
+    }
+
+    // Apply new logic based on significance
+    if (item.type === "significant") {
+      acc[key] = {
+        ...item,
+        leftMessage: "", // Left side empty
+        rightMessage: item.expectedValue || "", // Right side contains the expectedValue
+      };
+    } else if (item.type === "insignificant") {
+      acc[key] = {
+        ...item,
+        leftMessage: item.expectedValue || "", // Left side contains the expectedValue
+        rightMessage: "", // Right side empty
+      };
+    } else {
+      // For other types, show both expectedValue and actualValue
+      acc[key] = {
+        ...item,
+        leftMessage: item.expectedValue || "", // Left side contains the expectedValue
+        rightMessage: item.actualValue || "", // Right side contains the actualValue
+      };
+    }
+
+    return acc;
+  }, {} as Record<string, any>);
+
+  return { ...diff, differences: newDifferences };
+});
