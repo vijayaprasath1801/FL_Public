@@ -100,3 +100,32 @@
     setLeftHeights(newLeftHeights);
     setRightHeights(newRightHeights);
   }, [diff]);
+
+ <Flexgrid columnGap={6} rowGap={3}>
+      {/* Left Side: Expected Message */}
+      <FlexgridItem className="xmlContainerLeft" span={6} spacing={{ t: 1, l: 4 }}>
+        <h3>Payment into EMTS (Raw format)</h3>
+        {Object.entries(diff.differences).map(([path, item]) => (
+          <FlexgridItem id={`left-${path}`} span={12} spacing={{ b: 2 }} key={`left-${path}`}>
+            {item.type !== 2 && renderNodeXML(parseXml(diff.expectedMessage.message), path, item.type)}
+            {item.type === 2 && (
+              <div style={{ height: `${leftHeights[path] || 0}px`, backgroundColor: '#ffebee', border: '1px dashed #ffcdd2' }}>
+              </div>
+            )}
+          </FlexgridItem>
+        ))}
+      </FlexgridItem>
+
+      <FlexgridItem span={6} spacing={{ t: 1, l: 8 }}>
+        <h3>Payment into EPE (Raw format)</h3>
+        {Object.entries(diff.differences).map(([path, item]) => (
+          <FlexgridItem id={`right-${path}`} span={12} spacing={{ b: 2 }} key={`right-${path}`}>
+            {item.type !== 1 && renderNodeXML(parseXml(diff.actualMessage.message), path, item.type)}
+            {item.type === 1 && (
+              <div style={{ height: `${rightHeights[path] || 0}px`, backgroundColor: '#e3f2fd', border: '1px dashed #90caf9' }}>
+              </div>
+            )}
+          </FlexgridItem>
+        ))}
+      </FlexgridItem>
+    </Flexgrid>
