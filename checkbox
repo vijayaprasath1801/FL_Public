@@ -138,4 +138,8 @@ const filteredDifferences = paymentDifferences.map((diff) => {
   return { ...diff, differences: newDifferences }; 
 });
 
+.pnr-checkbox-inner-container[aria-checked="true"] .pnr-checkbox--label::before {
+  background: url("your-new-image.svg") no-repeat center center !important;
+  background-size: cover !important;
+}
 
