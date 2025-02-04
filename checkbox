@@ -159,3 +159,4 @@ const filteredDifferences = paymentDifferences.map((diff) => {
   background-color: #a29bfe;  
 }
 
+const isAnyCheckboxSelected = Object.values(checkedDiffs).some((checked) => checked);
