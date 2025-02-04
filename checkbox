@@ -139,66 +139,21 @@ const filteredDifferences = paymentDifferences.map((diff) => {
 });
 
 <div className="legendcontainer">
-  {Object.entries(diffType).map(([key, label], index) => (
+  {Object.entries(diffType).map(([key, label]) => (
     <div className="legendBox" key={key}>
-      <label className="custom-checkbox">
-        <input
-          type="checkbox"
-          className={`checkbox color-${index}`}
-          checked={!!checkedDiffs[key]}
-          onChange={() => handleCheckboxChange(Number(key))}
-        />
-        <span className="checkmark"></span> {formatLegend(key, label)}
+      <input
+        type="checkbox"
+        id={`checkbox-${key}`}
+        checked={!!checkedDiffs[key]}
+        onChange={() => handleCheckboxChange(Number(key))}
+        style={{ accentColor: getColorForDiffType(key) }} // Apply different colors
+      />
+      <label htmlFor={`checkbox-${key}`} style={{ color: getColorForDiffType(key) }}>
+        {formatLegend(key, label)}
       </label>
     </div>
   ))}
 </div>
-
-
-.custom-checkbox input {
-  display: none;
-}
-
- 
-.custom-checkbox {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-size: 16px;
-}
-
- 
-.checkmark {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  border: 2px solid #ccc;
-  display: inline-block;
-  position: relative;
-  margin-right: 8px;
-  transition: background 0.3s ease-in-out, border 0.3s;
-}
-
- 
-.checkbox:checked + .checkmark {
-  border-color: transparent;
-}
-
-.checkbox.color-0:checked + .checkmark {
-  background-color: #ff6b6b;  
-}
-
-.checkbox.color-1:checked + .checkmark {
-  background-color: #1dd1a1;  
-}
-
-.checkbox.color-2:checked + .checkmark {
-  background-color: #feca57; 
-}
-
-.checkbox.color-3:checked + .checkmark {
-  background-color: #54a0ff;  
-}
 
 .checkbox.color-4:checked + .checkmark {
   background-color: #a29bfe;  
