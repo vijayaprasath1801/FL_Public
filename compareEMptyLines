@@ -43,3 +43,47 @@
     })}
   </FlexgridItem>
 </Flexgrid>
+
+
+
+
+<Flexgrid columnGap={6} rowGap={3}>
+  {/* Left Column (EMTS Raw Format) */}
+  <FlexgridItem className="xmlContainerLeft" span={6} spacing={{ t: 1, 1: 4 }}>
+    <h3>Payment into EMTS (Raw format)</h3>
+    {Object.entries(diff.differences).map(([path, item], index) => {
+      let leftStyle = {};
+      let rightStyle = {};
+      if (item.type === 1) {
+        rightStyle = { minHeight: `${getHeightForRight(index)}px` };
+      } else if (item.type === 2) {
+        leftStyle = { minHeight: `${getHeightForLeft(index)}px` };
+      }
+      return (
+        <FlexgridItem span={12} spacing={{ b: 2 }} style={leftStyle}>
+          {renderNodeXML(parseXml(diff.expectedMessage.message), path, item.type)}
+        </FlexgridItem>
+      );
+    })}
+  </FlexgridItem>
+
+  {/* Right Column (EPE Raw Format) */}
+  <FlexgridItem span={6} spacing={{ t: 1, 1: 8 }}>
+    <h3>Payment into EPE (Raw format)</h3>
+    {Object.entries(diff.differences).map(([path, item], index) => {
+      let leftStyle = {};
+      let rightStyle = {};
+      if (item.type === 1) {
+        rightStyle = { minHeight: `${getHeightForRight(index)}px` };
+      } else if (item.type === 2) {
+        leftStyle = { minHeight: `${getHeightForLeft(index)}px` }; 
+      }
+      return (
+        <FlexgridItem span={12} spacing={{ b: 2 }} style={rightStyle}>
+          {renderNodeXML(parseXml(diff.actualMessage.message), path, item.type)}
+        </FlexgridItem>
+      );
+    })}
+  </FlexgridItem>
+</Flexgrid>
+
