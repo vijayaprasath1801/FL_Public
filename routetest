@@ -1,60 +1,71 @@
 import React, { Suspense } from "react";
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import * as Routes from "../index";
+import { render, screen } from "@iting-library/react";
+import {
+  Home,
+  Payments,
+  AddPaymentsDataset,
+  InitiateRun,
+  PaymentExecutions,
+  PaymentComparison,
+  RunIdSummary,
+  PaymentDatasetDetails,
+} from "../path-to-lazy-imports-file"; // Adjust the path
 
-// Mock the lazy-loaded components
-jest.mock("../pages/home", () => () => <div data-testid="home">Home Page</div>);
-jest.mock("../pages/payments", () => () => <div data-testid="payments">Payments Page</div>);
-jest.mock("../pages/payments/add-payment-dataset", () => () => <div data-testid="add-payments">Add Payments Dataset</div>);
-jest.mock("../pages/payment-executions/initiate-run", () => () => <div data-testid="initiate-run">Initiate Run</div>);
-jest.mock("../pages/payment-executions", () => () => <div data-testid="payment-executions">Payment Executions</div>);
-jest.mock("../pages/payment-comparison", () => () => <div data-testid="payment-comparison">Payment Comparison</div>);
-jest.mock("../pages/runId-summary", () => () => <div data-testid="run-id-summary">Run ID Summary</div>);
-jest.mock("../pages/payments/payment-dataset-details", () => () => <div data-testid="payment-dataset-details">Payment Dataset Details</div>);
+// Helper function to render lazy components
+const renderLazyComponent = (Component: React.LazyExoticComponent<() => JSX.Element>) => {
+  render(
+    <Suspense fallback={<div>Loading...</div>}>
+      <Component />
+    </Suspense>
+  );
+};
 
-describe("Lazy Loaded Routes", () => {
-  const renderComponent = async (Component, testId) => {
-    render(
-      <Suspense fallback={<div>Loading...</div>}>
-        <Component />
-      </Suspense>
-    );
-
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
-
-    return await screen.findByTestId(testId);
-  };
-
+describe("Lazy Loaded Components", () => {
   it("renders Home component", async () => {
-    expect(await renderComponent(Routes.Home, "home")).toBeInTheDocument();
+    renderLazyComponent(Home);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findByText(/Home/i)).toBeInTheDocument();
   });
 
   it("renders Payments component", async () => {
-    expect(await renderComponent(Routes.Payments, "payments")).toBeInTheDocument();
+    renderLazyComponent(Payments);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findByText(/Payments/i)).toBeInTheDocument();
   });
 
   it("renders AddPaymentsDataset component", async () => {
-    expect(await renderComponent(Routes.AddPaymentsDataset, "add-payments")).toBeInTheDocument();
+    renderLazyComponent(AddPaymentsDataset);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findByText(/Add Payment Dataset/i)).toBeInTheDocument();
   });
 
   it("renders InitiateRun component", async () => {
-    expect(await renderComponent(Routes.InitiateRun, "initiate-run")).toBeInTheDocument();
+    renderLazyComponent(InitiateRun);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findByText(/Initiate Run/i)).toBeInTheDocument();
   });
 
   it("renders PaymentExecutions component", async () => {
-    expect(await renderComponent(Routes.PaymentExecutions, "payment-executions")).toBeInTheDocument();
+    renderLazyComponent(PaymentExecutions);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findByText(/Payment Executions/i)).toBeInTheDocument();
   });
 
   it("renders PaymentComparison component", async () => {
-    expect(await renderComponent(Routes.PaymentComparison, "payment-comparison")).toBeInTheDocument();
+    renderLazyComponent(PaymentComparison);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findByText(/Payment Comparison/i)).toBeInTheDocument();
   });
 
   it("renders RunIdSummary component", async () => {
-    expect(await renderComponent(Routes.RunIdSummary, "run-id-summary")).toBeInTheDocument();
+    renderLazyComponent(RunIdSummary);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findByText(/Run ID Summary/i)).toBeInTheDocument();
   });
 
   it("renders PaymentDatasetDetails component", async () => {
-    expect(await renderComponent(Routes.PaymentDatasetDetails, "payment-dataset-details")).toBeInTheDocument();
+    renderLazyComponent(PaymentDatasetDetails);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(await screen.findByText(/Payment Dataset Details/i)).toBeInTheDocument();
   });
 });
