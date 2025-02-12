@@ -1,0 +1,143 @@
+import React from "react";
+import { screen, render, waitFor, fireEvent, act } from "@testing-library/react";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { fetchDataToCompareAction } from "../../../actions/paymentActions";
+import { getPaymentDataToCompareState } from "../../../selectors/paymentSelectors";
+import { paymentDatasetReducer, PAYMENT_DATASET_FEATURE_KEY } from "../../../reducers/paymentdataset.reducer";
+import PaymentComparison from "../PaymentComparison";
+
+jest.mock("../../../actions/paymentActions", () => ({
+  fetchDataToCompareAction: jest.fn(),
+}));
+
+jest.mock("../../../selectors/paymentSelectors", () => ({
+  getPaymentDataToCompareState: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: jest.fn(),
+  useParams: jest.fn(() => ({ runid: "67730763049bb0569f7252c0" })),
+}));
+
+describe("PaymentComparison Component", () => {
+  let store: any;
+  let navigateMock: jest.Mock;
+
+  beforeEach(() => {
+    navigateMock = jest.fn();
+    (useNavigate as jest.Mock).mockReturnValue(navigateMock);
+
+    store = configureStore({
+      reducer: {
+        [PAYMENT_DATASET_FEATURE_KEY]: paymentDatasetReducer,
+      },
+      preloadedState: {
+        [PAYMENT_DATASET_FEATURE_KEY]: {
+          paymentDifferences: [],
+          diffData: [],
+          loading: false,
+        },
+      },
+    });
+
+    jest.clearAllMocks();
+  });
+
+  it("dispatches fetchDataToCompareAction on mount", async () => {
+    render(
+      <Provider store={store}>
+        <PaymentComparison />
+      </Provider>
+    );
+
+    await waitFor(() => {
+      expect(fetchDataToCompareAction).toHaveBeenCalledWith({
+        runId: "67730763049bb0569f7252c0",
+        paymentIds: ["676effabf4b70c03dcecca9b"],
+      });
+    });
+  });
+
+  it("shows loading indicator when fetching data", async () => {
+    store = configureStore({
+      reducer: {
+        [PAYMENT_DATASET_FEATURE_KEY]: paymentDatasetReducer,
+      },
+      preloadedState: {
+        [PAYMENT_DATASET_FEATURE_KEY]: {
+          loading: true,
+          paymentDifferences: [],
+          diffData: [],
+        },
+      },
+    });
+
+    render(
+      <Provider store={store}>
+        <PaymentComparison />
+      </Provider>
+    );
+
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+  });
+
+  it("renders differences when data is available", async () => {
+    store = configureStore({
+      reducer: {
+        [PAYMENT_DATASET_FEATURE_KEY]: paymentDatasetReducer,
+      },
+      preloadedState: {
+        [PAYMENT_DATASET_FEATURE_KEY]: {
+          loading: false,
+          paymentDifferences: [
+            {
+              expectedMessage: { message: "<xml>Expected</xml>" },
+              actualMessage: { message: "<xml>Actual</xml>" },
+              differences: [],
+            },
+          ],
+        },
+      },
+    });
+
+    render(
+      <Provider store={store}>
+        <PaymentComparison />
+      </Provider>
+    );
+
+    expect(screen.getByText("Payment Difference")).toBeInTheDocument();
+    expect(screen.getByText("Difference Between EMTS and EPE Payments")).toBeInTheDocument();
+  });
+
+  it("expands row when clicked", async () => {
+    render(
+      <Provider store={store}>
+        <PaymentComparison />
+      </Provider>
+    );
+
+    const expandableRow = screen.getByText("Difference Between EMTS and EPE Payments");
+    fireEvent.click(expandableRow);
+
+    await waitFor(() => {
+      expect(screen.getByText("Tag/Field Delta Table")).toBeInTheDocument();
+    });
+  });
+
+  it("navigates back when clicking Back button", () => {
+    render(
+      <Provider store={store}>
+        <PaymentComparison />
+      </Provider>
+    );
+
+    const backButton = screen.getByText("Back");
+    fireEvent.click(backButton);
+
+    expect(navigateMock).toHaveBeenCalledWith(-1);
+  });
+});
