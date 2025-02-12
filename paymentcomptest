@@ -1,5 +1,5 @@
 import React from "react";
-import { screen, render, waitFor, fireEvent, act } from "@testing-library/react";
+import { screen, render, waitFor, fireEvent } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -23,12 +23,12 @@ jest.mock("react-router-dom", () => ({
 }));
 
 describe("PaymentComparison Component", () => {
-  let store: any;
-  let navigateMock: jest.Mock;
+  let store;
+  let navigateMock;
 
   beforeEach(() => {
     navigateMock = jest.fn();
-    (useNavigate as jest.Mock).mockReturnValue(navigateMock);
+    useNavigate.mockReturnValue(navigateMock);
 
     store = configureStore({
       reducer: {
