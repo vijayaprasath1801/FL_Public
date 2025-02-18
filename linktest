@@ -1,0 +1,42 @@
+import { render, screen, fireEvent } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+
+const linkRenderer = (item: { status: string }, name: string, url: string, state = false) => {
+  const disableHyperLink = ["ERROR", "SCHEDULED_NOT_STARTED"].includes(item.status);
+  return disableHyperLink ? (
+    name
+  ) : (
+    <a
+      style={{ display: "inline-flex", textDecoration: "underline", cursor: "pointer" }}
+      onClick={() => (state ? navigate(url, { state: { runName: name } }) : navigate(url))}
+      key={name}
+    >
+      {name}
+    </a>
+  );
+};
+
+describe("linkRenderer function", () => {
+  test("renders plain text if status is ERROR or SCHEDULED_NOT_STARTED", () => {
+    render(<BrowserRouter>{linkRenderer({ status: "ERROR" }, "Test Name", "/test-url")}</BrowserRouter>);
+    expect(screen.getByText("Test Name")).toBeInTheDocument();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  test("renders a link if status is not ERROR or SCHEDULED_NOT_STARTED", () => {
+    render(<BrowserRouter>{linkRenderer({ status: "ACTIVE" }, "Test Name", "/test-url")}</BrowserRouter>);
+    const linkElement = screen.getByRole("link", { name: "Test Name" });
+    expect(linkElement).toBeInTheDocument();
+    expect(linkElement).toHaveAttribute("href", "/test-url");
+  });
+
+  test("calls navigate function when link is clicked", () => {
+    const navigateMock = jest.fn();
+    render(<BrowserRouter>{linkRenderer({ status: "ACTIVE" }, "Test Name", "/test-url")}</BrowserRouter>);
+
+    const linkElement = screen.getByRole("link", { name: "Test Name" });
+    fireEvent.click(linkElement);
+
+    expect(navigateMock).toHaveBeenCalledWith("/test-url");
+  });
+});
