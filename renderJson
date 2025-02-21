@@ -4,16 +4,18 @@ const RenderJSON = ({ data }: { data: any }) => {
 
     return (
       <div className="json-container">
-        <div className="json-bracket">{isArray ? "[" : "{"}</div>
-
-        {Object.entries(data).map(([key, value], index) => (
-          <div key={index} className="json-item">
-            {!isArray && <strong className="json-key">{key}: </strong>}
-            <RenderJSON data={value} />
+        <div className="json-item">
+          {isArray ? "[" : "{"}
+          <div className="json-content">
+            {Object.entries(data).map(([key, value], index) => (
+              <div key={index} className="json-line">
+                {!isArray && <strong className="json-key">{key}: </strong>}
+                <RenderJSON data={value} />
+              </div>
+            ))}
           </div>
-        ))}
-
-        <div className="json-bracket">{isArray ? "]" : "}"}</div>
+          {isArray ? "]" : "}"}
+        </div>
       </div>
     );
   }
