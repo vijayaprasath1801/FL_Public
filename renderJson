@@ -1,31 +1,44 @@
+import "./RenderJSON.css";
+
 const RenderJSON = ({ data }) => {
   if (typeof data === "object" && data !== null) {
+    const isArray = Array.isArray(data);
+
     return (
       <div className="json-container">
         <div className="json-bracket">
-          {"{"}
-          <span className="json-hex-code">:&wdf</span>
+          {isArray ? "[" : "{"}
         </div>
 
-        {Object.entries(data).map(([key, value], index) => (
-          <div key={index} className="json-item">
-            <div className="json-pair">
-              <strong className="json-key">{key}:</strong>
-              <RenderJSON data={value} />
-            </div>
-          </div>
-        ))}
+        {isArray
+          ? data.map((item, index) => (
+              <div key={index} className="json-item">
+                <RenderJSON data={item} />
+              </div>
+            ))
+          : Object.entries(data).map(([key, value], index) => (
+              <div key={index} className="json-item">
+                <div className="json-pair">
+                  <strong className="json-key">
+                    {key}: {"{"}
+                  </strong>
+                  <RenderJSON data={value} />
+                  <span className="json-closing-bracket">}</span>
+                </div>
+              </div>
+            ))}
 
         <div className="json-bracket">
-          {"}"}
-          <span className="json-hex-code">:&wdf</span>
+          {isArray ? "]" : "}"}
         </div>
       </div>
     );
   }
 
-  return <span className="json-value">{JSON.stringify(data)}</span>;
+  return <span className="json-value">{String(data)}</span>;
 };
+
+export default RenderJSON;
 
 .json-container {
   margin-left: 1rem;
@@ -43,6 +56,7 @@ const RenderJSON = ({ data }) => {
 
 .json-pair {
   display: flex;
+  flex-direction: row;
   align-items: flex-start;
   gap: 0.5rem;
 }
@@ -50,6 +64,7 @@ const RenderJSON = ({ data }) => {
 .json-key {
   color: #2563eb; /* Blue */
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .json-value {
@@ -62,8 +77,7 @@ const RenderJSON = ({ data }) => {
   font-weight: bold;
 }
 
-.json-hex-code {
-  color: #9ca3af; /* Subtle gray for hex code */
-  font-style: italic;
-  margin-left: 0.25rem; /* Space between bracket and hex code */
+.json-closing-bracket {
+  color: #16a34a; /* Green */
+  margin-left: 0.25rem;
 }
