@@ -1,27 +1,26 @@
-const RenderJSON = ({ data }: { data: any }) => {
+const RenderJSON = ({ data } ) => { 
   if (typeof data === "object" && data !== null) {
     const isArray = Array.isArray(data);
 
     return (
       <div className="json-container">
         {isArray ? "[" : "{"}
-        <div className="json-content">
-          {Object.entries(data).map(([key, value], index) => (
-            <div key={index} className="json-line">
-              {!isArray && (
-                <strong className="json-key">
-                  {key}: {typeof value === "object" ? (Array.isArray(value) ? "[" : "{") : ""}
-                </strong>
-              )}
-              {typeof value === "object" ? (
+        {Object.entries(data).map(([key, value], index) => (
+          <div key={index} className="json-line">
+            {!isArray && (
+              <strong className="json-key">
+                {key}: {typeof value === "object" ? "" : String(value)}
+              </strong>
+            )}
+            {typeof value === "object" ? (
+              <>
+                {!isArray && "{"}
                 <RenderJSON data={value} />
-              ) : (
-                <span className="json-value">{String(value)}</span>
-              )}
-              {typeof value === "object" ? (Array.isArray(value) ? "]" : "}") : ""}
-            </div>
-          ))}
-        </div>
+                {!isArray && "}"}
+              </>
+            ) : null}
+          </div>
+        ))}
         {isArray ? "]" : "}"}
       </div>
     );
