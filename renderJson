@@ -1,0 +1,15 @@
+const RenderJSON = ({ data }) => {
+  if (typeof data === "object" && data !== null) {
+    return (
+      <div className="ml-4 border-l-2 pl-4 border-gray-300">
+        {Object.entries(data).map(([key, value], index) => (
+          <div key={index} className="mb-2">
+            <strong className="text-blue-600">{key}:</strong>
+            <RenderJSON data={value} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return <span className="ml-2 text-gray-700">{String(data)}</span>;
+};
