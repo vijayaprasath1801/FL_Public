@@ -1,15 +1,76 @@
+ 
+
 const RenderJSON = ({ data }) => {
   if (typeof data === "object" && data !== null) {
+    const isArray = Array.isArray(data);
+
     return (
-      <div className="ml-4 border-l-2 pl-4 border-gray-300">
+      <div className="json-container">
+        {isArray && <div className="json-bracket">[</div>}
+
         {Object.entries(data).map(([key, value], index) => (
-          <div key={index} className="mb-2">
-            <strong className="text-blue-600">{key}:</strong>
-            <RenderJSON data={value} />
+          <div key={index} className="json-item">
+            {!isArray && (
+              <div className="json-pair">
+                <strong className="json-key">{key}:</strong>
+                <RenderJSON data={value} />
+              </div>
+            )}
+            {isArray && (
+              <div className="json-array-item">
+                <RenderJSON data={value} />
+              </div>
+            )}
           </div>
         ))}
+
+        {isArray && <div className="json-bracket">]</div>}
       </div>
     );
   }
-  return <span className="ml-2 text-gray-700">{String(data)}</span>;
+
+  return <span className="json-value">{String(data)}</span>;
 };
+
+
+
+
+.json-container {
+  margin-left: 1rem;
+  padding-left: 1rem;
+  border-left: 2px solid #d1d5db;
+  max-width: 600px;
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.json-item {
+  margin-bottom: 0.5rem;
+}
+
+.json-pair {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem; 
+}
+
+.json-key {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.json-value {
+  margin-left: 0.5rem;
+  color: #374151;
+}
+
+.json-bracket {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.json-array-item {
+  margin-left: 1rem;
+}
+
