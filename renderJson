@@ -4,63 +4,28 @@ const RenderJSON = ({ data }: { data: any }) => {
 
     return (
       <div className="json-container">
-        <div className="json-item">
-          {isArray ? "[" : "{"}
-          <div className="json-content">
-            {Object.entries(data).map(([key, value], index) => (
-              <div key={index} className="json-line">
-                {!isArray && <strong className="json-key">{key}: </strong>}
+        {isArray ? "[" : "{"}
+        <div className="json-content">
+          {Object.entries(data).map(([key, value], index) => (
+            <div key={index} className="json-line">
+              {!isArray && (
+                <strong className="json-key">
+                  {key}: {typeof value === "object" ? (Array.isArray(value) ? "[" : "{") : ""}
+                </strong>
+              )}
+              {typeof value === "object" ? (
                 <RenderJSON data={value} />
-              </div>
-            ))}
-          </div>
-          {isArray ? "]" : "}"}
+              ) : (
+                <span className="json-value">{String(value)}</span>
+              )}
+              {typeof value === "object" ? (Array.isArray(value) ? "]" : "}") : ""}
+            </div>
+          ))}
         </div>
+        {isArray ? "]" : "}"}
       </div>
     );
   }
 
   return <span className="json-value">{String(data)}</span>;
 };
-
-.json-container {
-  margin-left: 1rem;
-  padding-left: 1rem;
-  border-left: 2px solid #d1d5db; /* Light gray border */
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.json-item {
-  margin-bottom: 0.5rem;
-}
-
-.json-pair {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.json-key {
-  color: #2563eb; /* Blue */
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-.json-value {
-  margin-left: 0.5rem;
-  color: #374151; /* Dark gray */
-}
-
-.json-bracket {
-  color: #16a34a; /* Green */
-  font-weight: bold;
-}
-
-.json-closing-bracket {
-  color: #16a34a; /* Green */
-  margin-left: 0.25rem;
-}
