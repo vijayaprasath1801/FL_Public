@@ -1,22 +1,30 @@
 const RenderJSON = ({ data }) => {
   if (typeof data === "object" && data !== null) {
+    const isArray = Array.isArray(data);
+
     return (
       <div className="json-container">
         <div className="json-bracket">
-          {"{"}<span className="json-hex-code">:&wdf</span>
+          {isArray ? "[" : "{"}
+          <span className="json-hex-code">:&wdf</span>
         </div>
 
         {Object.entries(data).map(([key, value], index) => (
           <div key={index} className="json-item">
             <div className="json-pair">
-              <strong className="json-key">{key}:</strong>
+              {!isArray && (
+                <>
+                  <strong className="json-key">{key}:</strong>
+                </>
+              )}
               <RenderJSON data={value} />
             </div>
           </div>
         ))}
 
         <div className="json-bracket">
-          {"}"}<span className="json-hex-code">:&wdf</span>
+          {isArray ? "]" : "}"}
+          <span className="json-hex-code">:&wdf</span>
         </div>
       </div>
     );
@@ -24,7 +32,6 @@ const RenderJSON = ({ data }) => {
 
   return <span className="json-value">{String(data)}</span>;
 };
-
 
 .json-container {
   margin-left: 1rem;
