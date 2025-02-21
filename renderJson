@@ -1,30 +1,23 @@
- 
-
 const RenderJSON = ({ data }) => {
   if (typeof data === "object" && data !== null) {
-    const isArray = Array.isArray(data);
-
     return (
       <div className="json-container">
-        {isArray && <div className="json-bracket">[</div>}
+        <div className="json-bracket">
+          {"{"}<span className="json-hex-code">:&wdf</span>
+        </div>
 
         {Object.entries(data).map(([key, value], index) => (
           <div key={index} className="json-item">
-            {!isArray && (
-              <div className="json-pair">
-                <strong className="json-key">{key}:</strong>
-                <RenderJSON data={value} />
-              </div>
-            )}
-            {isArray && (
-              <div className="json-array-item">
-                <RenderJSON data={value} />
-              </div>
-            )}
+            <div className="json-pair">
+              <strong className="json-key">{key}:</strong>
+              <RenderJSON data={value} />
+            </div>
           </div>
         ))}
 
-        {isArray && <div className="json-bracket">]</div>}
+        <div className="json-bracket">
+          {"}"}<span className="json-hex-code">:&wdf</span>
+        </div>
       </div>
     );
   }
@@ -33,16 +26,14 @@ const RenderJSON = ({ data }) => {
 };
 
 
-
-
 .json-container {
   margin-left: 1rem;
   padding-left: 1rem;
-  border-left: 2px solid #d1d5db;
+  border-left: 2px solid #d1d5db; /* Light gray border */
   max-width: 600px;
-  gap: 0.5rem;
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
 .json-item {
@@ -52,25 +43,26 @@ const RenderJSON = ({ data }) => {
 .json-pair {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem; 
+  gap: 0.5rem;
 }
 
 .json-key {
-  color: #2563eb;
+  color: #2563eb; /* Blue */
   font-weight: bold;
 }
 
 .json-value {
   margin-left: 0.5rem;
-  color: #374151;
+  color: #374151; /* Dark gray */
 }
 
 .json-bracket {
-  color: #16a34a;
+  color: #16a34a; /* Green */
   font-weight: bold;
 }
 
-.json-array-item {
-  margin-left: 1rem;
+.json-hex-code {
+  color: #9ca3af; /* Subtle gray for hex code */
+  font-style: italic;
+  margin-left: 0.25rem; /* Space between bracket and hex code */
 }
-
