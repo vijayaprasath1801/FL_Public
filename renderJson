@@ -1,44 +1,25 @@
-import "./RenderJSON.css";
-
-const RenderJSON = ({ data }) => {
+const RenderJSON = ({ data }: { data: any }) => {
   if (typeof data === "object" && data !== null) {
     const isArray = Array.isArray(data);
 
     return (
       <div className="json-container">
-        <div className="json-bracket">
-          {isArray ? "[" : "{"}
-        </div>
+        <div className="json-bracket">{isArray ? "[" : "{"}</div>
 
-        {isArray
-          ? data.map((item, index) => (
-              <div key={index} className="json-item">
-                <RenderJSON data={item} />
-              </div>
-            ))
-          : Object.entries(data).map(([key, value], index) => (
-              <div key={index} className="json-item">
-                <div className="json-pair">
-                  <strong className="json-key">
-                    {key}: {"{"}
-                  </strong>
-                  <RenderJSON data={value} />
-                  <span className="json-closing-bracket">}</span>
-                </div>
-              </div>
-            ))}
+        {Object.entries(data).map(([key, value], index) => (
+          <div key={index} className="json-item">
+            {!isArray && <strong className="json-key">{key}: </strong>}
+            <RenderJSON data={value} />
+          </div>
+        ))}
 
-        <div className="json-bracket">
-          {isArray ? "]" : "}"}
-        </div>
+        <div className="json-bracket">{isArray ? "]" : "}"}</div>
       </div>
     );
   }
 
   return <span className="json-value">{String(data)}</span>;
 };
-
-export default RenderJSON;
 
 .json-container {
   margin-left: 1rem;
