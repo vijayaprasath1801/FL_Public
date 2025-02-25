@@ -196,5 +196,197 @@ Used to embed another document within the current HTML.
 <iframe src="https://example.com" width="300" height="200"></iframe>
 ```
 
-*(Content for CSS and JavaScript sections will follow the same detailed format with explanations and examples.)*
+# CSS
+
+## CSS Selectors
+
+### Selector Overview
+
+**Element Selectors:** Target HTML elements directly.
+```css
+p {
+  color: blue;
+}
+```
+
+**Class Selectors:** Target elements with a specific class.
+```css
+.highlight {
+  background-color: yellow;
+}
+```
+
+**ID Selectors:** Target elements with a specific ID.
+```css
+#main-title {
+  font-size: 24px;
+}
+```
+
+**Attribute Selectors:** Target elements based on attributes.
+```css
+a[target="_blank"] {
+  color: red;
+}
+```
+
+**Pseudo-Class Selectors:** Style elements in a specific state.
+```css
+a:hover {
+  text-decoration: underline;
+}
+```
+
+**Pseudo-Elements:** Style parts of elements.
+```css
+p::first-line {
+  font-weight: bold;
+}
+```
+
+### Using Combinators
+
+**Combining Element and Class Selectors:**
+```css
+div.card {
+  padding: 20px;
+}
+```
+
+**Combinator Operators:**
+```css
+div > p {
+  color: green;
+}
+```
+
+### Media Queries
+
+**Using Media Queries:**
+```css
+@media (max-width: 600px) {
+  body {
+    background-color: lightgray;
+  }
+}
+```
+
+### Positioning Content
+
+**Relative Positioning:**
+```css
+.element {
+  position: relative;
+  top: 10px;
+}
+```
+
+**Absolute Positioning:**
+```css
+.element {
+  position: absolute;
+  left: 50px;
+}
+```
+
+### Flexbox
+
+**Container Configuration:**
+```css
+.container {
+  display: flex;
+  justify-content: space-between;
+}
+```
+
+**Item Configuration:**
+```css
+.item {
+  flex-grow: 1;
+}
+```
+
+---
+
+# JavaScript
+
+## JavaScript Essentials
+
+### Introducing JavaScript
+
+**Objects:**
+```js
+const person = {
+  name: "John",
+  age: 30
+};
+```
+
+**Constructors:**
+```js
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+```
+
+**Prototypes:**
+```js
+Person.prototype.greet = function() {
+  console.log(`Hello, my name is ${this.name}`);
+};
+```
+
+## Inheritance
+
+**Using Class Keyword:**
+```js
+class Animal {
+  speak() {
+    console.log("Animal sound");
+  }
+}
+
+class Dog extends Animal {
+  speak() {
+    console.log("Bark");
+  }
+}
+```
+
+## Array Methods
+
+**Manipulating Elements:**
+```js
+const numbers = [1, 2, 3];
+numbers.push(4); // [1, 2, 3, 4]
+```
+
+**Searching:**
+```js
+const found = numbers.find(num => num === 2);
+```
+
+## DOM Elements
+
+**Finding Elements:**
+```js
+const button = document.getElementById('myButton');
+```
+
+**Modifying Elements:**
+```js
+button.textContent = 'Clicked!';
+```
+
+## Events
+
+**Event Registration:**
+```js
+button.addEventListener('click', () => {
+  alert('Button clicked!');
+});
+```
+
+
 
