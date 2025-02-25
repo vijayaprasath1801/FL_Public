@@ -714,4 +714,150 @@ By default, CSS calculates an element's size without including padding and borde
 **When to use:** It's a best practice to use `box-sizing: border-box` to avoid size overflow issues and simplify layout calculations.
 
 ---
+  
+## Float
+
+### What is Float?
+The `float` property in CSS is used to position elements to the left or right of their container, allowing text and inline elements to wrap around them.
+
+### Syntax
+```css
+selector {
+  float: left | right | none | inherit;
+}
+```
+
+### Values Explained
+- `left`: Floats the element to the left.
+- `right`: Floats the element to the right.
+- `none`: Removes any floating from the element.
+- `inherit`: Inherits the float property from its parent.
+
+### Example: Basic Float Usage
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    .box {
+      width: 150px;
+      height: 150px;
+      margin: 10px;
+      background-color: lightblue;
+    }
+
+    .left-float {
+      float: left;
+    }
+
+    .right-float {
+      float: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="box left-float">Left Float</div>
+  <div class="box right-float">Right Float</div>
+  <p>This text will wrap around the floated boxes.</p>
+</body>
+</html>
+```
+
+**When to Use:** Use floats when you want elements (like images or sidebars) to align beside other content.
+
+---
+
+## Clearing Floats
+
+### What is Clearing?
+When you float elements, following content can wrap around them. To stop this behavior, you need to clear the float using the `clear` property.
+
+### Syntax
+```css
+selector {
+  clear: left | right | both | none;
+}
+```
+
+### Values Explained
+- `left`: Clears elements floated to the left.
+- `right`: Clears elements floated to the right.
+- `both`: Clears elements floated to both sides.
+- `none`: Default, no clearing.
+
+### Example: Clearing Floats
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    .floated-box {
+      float: left;
+      width: 100px;
+      height: 100px;
+      background-color: coral;
+      margin-right: 10px;
+    }
+
+    .clear-box {
+      clear: both;
+      background-color: lightgreen;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="floated-box">Floating Box</div>
+  <p>This text wraps around the floating box.</p>
+  <div class="clear-box">Cleared Element</div>
+</body>
+</html>
+```
+
+**When to Use:** When you want elements to appear below floated elements without wrapping around them.
+
+---
+
+## Containing Floats
+
+### Why Contain Floats?
+When all child elements inside a container are floated, the parent container can collapse, resulting in layout issues.
+
+### Solution 1: Using `clear` with an Empty Div
+```html
+<div class="container">
+  <div class="floated-box">Float 1</div>
+  <div class="floated-box">Float 2</div>
+  <div style="clear: both;"></div> <!-- Clears the floats -->
+</div>
+```
+
+### Solution 2: Using `overflow` Property
+```css
+.container {
+  overflow: hidden; /* Automatically expands to contain floats */
+}
+```
+
+### Solution 3: Using CSS Clearfix Hack
+```css
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+```
+
+### Example: Using Clearfix
+```html
+<div class="container clearfix">
+  <div class="floated-box">Float 1</div>
+  <div class="floated-box">Float 2</div>
+</div>
+```
+
+**When to Use:** Always contain floats when you don't want the parent container to collapse, especially in layouts involving multiple floated elements.
+
+---
+
 
