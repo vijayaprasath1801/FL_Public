@@ -148,38 +148,150 @@ React is a JavaScript library for building user interfaces. It is component-base
 
 ---
 
-## Coding Task: Find the Bug
+# Advanced React Coding Test: Task Manager App
 
-### Task
-The following code should display a counter that increases by 1 when the button is clicked.
+## Problem Statement
+
+You are given a simplified **Task Manager** app built with **React** and **Redux** for state management. The app should allow users to:
+
+- Add new tasks.
+- Mark tasks as completed.
+- Filter tasks by status (**All**, **Active**, **Completed**).
+
+However, there are several bugs causing unexpected behavior that need to be addressed.
+
+---
+
+## Code Snippet (Buggy Version)
+
+### `store.js`
 
 ```js
-import React, { useState } from 'react';
+import { createStore } from 'redux';
 
-const BuggyCounter = () => {
-  const [count, setCount] = useState(0);
+const initialState = {
+  tasks: [],
+  filter: 'ALL',
+};
 
-  const increment = () => {
-    setCount(count++); // BUG: Incorrect state update
+function taskReducer(state = initialState, action) {
+  switch (action.type) {
+    case 'ADD_TASK':
+      return {
+        ...state,
+        tasks: [...state.tasks, { id: Date.now(), text: action.payload, completed: false }],
+      };
+    case 'TOGGLE_TASK':
+      return {
+        ...state,
+        tasks: state.tasks.map((task) => {
+          if (task.id === action.payload.id) {
+            task.completed = !task.completed; // BUG: Mutating state directly
+          }
+          return task;
+        }),
+      };
+    case 'SET_FILTER':
+      return {
+        ...state,
+        filter: action.payload,
+      };
+    default:
+      return state;
+  }
+}
+
+export const store = createStore(taskReducer);
+```
+
+### `App.js`
+
+```js
+import React from 'react';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { store } from './store';
+
+const TaskApp = () => {
+  const dispatch = useDispatch();
+  const tasks = useSelector((state) => state.tasks);
+  const filter = useSelector((state) => state.filter);
+
+  const handleAddTask = (e) => {
+    if (e.key === 'Enter' && e.target.value) {
+      dispatch({ type: 'ADD_TASK', payload: e.target.value });
+      e.target.value = '';
+    }
   };
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === 'COMPLETED') return task.completed;
+    if (filter === 'ACTIVE') return !task.completed;
+    return true;
+  });
 
   return (
     <div>
-      <p>Count: {count}</p>
-      <button onClick={increment}>Increment</button>
+      <h1>Task Manager</h1>
+      <input type="text" placeholder="Add new task..." onKeyDown={handleAddTask} />
+      <div>
+        {filteredTasks.map((task) => (
+          <div key={task.id} onClick={() => dispatch({ type: 'TOGGLE_TASK', payload: { id: task.id } })}>
+            <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>{task.text}</span>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => dispatch({ type: 'SET_FILTER', payload: 'ALL' })}>All</button>
+      <button onClick={() => dispatch({ type: 'SET_FILTER', payload: 'ACTIVE' })}>Active</button>
+      <button onClick={() => dispatch({ type: 'SET_FILTER', payload: 'COMPLETED' })}>Completed</button>
     </div>
   );
 };
 
-export default BuggyCounter;
+const App = () => (
+  <Provider store={store}>
+    <TaskApp />
+  </Provider>
+);
+
+export default App;
 ```
 
-### Issue
-Using `count++` directly mutates the state, which React does not track properly.
+---
 
-### Solution
-Use the previous state to ensure proper updates:
+## Requirements
 
-```js
-setCount((prevCount) => prevCount + 1);
+1. **Fix the bugs** in state updates and ensure the application behaves as expected.
+2. Ensure **state immutability** is maintained.
+3. Implement a feature to **delete a task**.
+4. Improve performance by **memoizing the task list** to prevent unnecessary re-renders.
+5. Add a visual indicator for the **active filter**.
+
+---
+
+## Known Issues to Identify and Fix
+
+- Toggling a task's completion status mutates state directly (`task.completed = !task.completed`).
+- Filtering doesn't update correctly when switching between views rapidly.
+- No option to delete tasks.
+- Unnecessary re-renders of the task list when unrelated state changes occur.
+
+---
+
+## Evaluation Criteria
+
+- Proper usage of **Redux** for state management.
+- Avoiding direct state mutations.
+- Clean, readable, and maintainable code.
+- Implementation of performance optimization techniques.
+- Handling edge cases effectively.
+
+---
+
+## Bonus Points
+
+- Add animations when adding or removing tasks.
+- Persist tasks using **localStorage**.
+- Implement unit tests for the reducer and actions.
+
+
 ```
