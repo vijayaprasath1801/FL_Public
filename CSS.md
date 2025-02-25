@@ -1117,7 +1117,7 @@ Elements with `fixed` positioning are removed from the document flow and positio
 
 ---
 
-# Z-Index
+## Z-Index
 
 ## Introduction
 
