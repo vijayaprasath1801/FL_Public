@@ -1275,3 +1275,205 @@ In this case, `.child` cannot escape the stacking context created by `.parent`.
 5. **Debug using browser dev tools** to inspect stacking order.
 
 ---
+## Centering Content
+
+Centering content is a common task in web design, and CSS provides various techniques to center elements both horizontally and vertically. Choosing the right method depends on the type of element you're centering and the layout requirements.
+
+---
+
+## **1. Centering Text Horizontally**
+
+The simplest way to center text horizontally inside a container is by using the `text-align` property.
+
+### **Example:**
+```html
+<div class="center-text">
+  <p>This text is centered horizontally.</p>
+</div>
+```
+
+```css
+.center-text {
+  text-align: center;
+  border: 1px solid #000;
+  padding: 20px;
+}
+```
+
+**When to Use:**
+- Centering inline elements or text inside a block-level container.
+
+---
+
+## **2. Centering Block Elements Horizontally**
+
+For block-level elements (like a `div`), you can use the `margin` property.
+
+### **Example:**
+```html
+<div class="center-block">
+  Centered Block Element
+</div>
+```
+
+```css
+.center-block {
+  width: 50%;
+  margin: 0 auto;
+  background-color: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+}
+```
+
+**When to Use:**
+- When you want to center a block element within its parent container.
+
+---
+
+## **3. Centering Vertically Using Padding and Line Height**
+
+This method works best for single-line text elements.
+
+### **Example:**
+```html
+<div class="vertical-center">
+  Vertically Centered Text
+</div>
+```
+
+```css
+.vertical-center {
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+  background-color: #e0e0e0;
+}
+```
+
+**When to Use:**
+- Best for centering single-line text within a container.
+
+---
+
+## **4. Centering Using Flexbox**
+
+Flexbox is the most versatile and modern way to center elements both horizontally and vertically.
+
+### **Example:**
+```html
+<div class="flex-center">
+  <p>Centered with Flexbox</p>
+</div>
+```
+
+```css
+.flex-center {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  height: 200px;
+  background-color: #d0d0d0;
+}
+```
+
+**When to Use:**
+- For responsive designs and layouts requiring both horizontal and vertical centering.
+
+---
+
+## **5. Centering Using Grid Layout**
+
+CSS Grid also allows for easy centering of content.
+
+### **Example:**
+```html
+<div class="grid-center">
+  <p>Centered with Grid</p>
+</div>
+```
+
+```css
+.grid-center {
+  display: grid;
+  place-items: center; /* Centers both vertically and horizontally */
+  height: 200px;
+  background-color: #c0c0c0;
+}
+```
+
+**When to Use:**
+- When using grid layouts and you need simple centering for child elements.
+
+---
+
+## **6. Absolute Positioning for Centering**
+
+Using `position: absolute` can also center elements, especially in more complex layouts.
+
+### **Example:**
+```html
+<div class="absolute-parent">
+  <div class="absolute-center">Absolutely Centered</div>
+</div>
+```
+
+```css
+.absolute-parent {
+  position: relative;
+  height: 200px;
+  background-color: #b0b0b0;
+}
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #909090;
+  padding: 10px;
+}
+```
+
+**When to Use:**
+- For fixed-size elements or when you need precise placement.
+
+---
+
+## **7. Centering with CSS Transform**
+
+Another method using `transform` for more advanced centering.
+
+### **Example:**
+```html
+<div class="transform-center">
+  <p>Centered with Transform</p>
+</div>
+```
+
+```css
+.transform-center {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #a0a0a0;
+  padding: 20px;
+}
+```
+
+**When to Use:**
+- When combining multiple transforms or handling dynamic sizes.
+
+---
+
+## ✅ **Best Practices for Centering Content**
+
+1. Use **Flexbox** or **Grid** for modern, responsive layouts.
+2. Use `margin: auto` for basic horizontal centering of block elements.
+3. Use `text-align: center` for centering inline text elements.
+4. Avoid using `position: absolute` unless necessary for complex designs.
+
+With these techniques, you can handle nearly every centering challenge in CSS!
+
+---
