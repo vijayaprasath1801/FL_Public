@@ -300,7 +300,135 @@ p {
 
 ---
 
-This section should give beginners a solid understanding of combinators and selectors, helping them write more efficient and organized CSS.
+# Media Queries and Responsive Design in CSS
+
+## Table of Contents
+
+1. [Media Queries](#media-queries)
+2. [Media Attributes](#media-attributes)
+3. [Using Media Queries](#using-media-queries)
+4. [UI Breakpoints and Media Queries](#ui-breakpoints-and-media-queries)
+
+---
+
+## Media Queries
+
+**Media Queries** in CSS allow developers to apply different styles depending on the device's characteristics, such as screen size, resolution, orientation, and more. This technique is essential for creating **responsive designs** that adapt to various devices like phones, tablets, and desktops.
+
+### Syntax
+```css
+@media (condition) {
+  /* CSS rules go here */
+}
+```
+
+### Example
+```css
+/* Apply styles when the screen width is 600px or less */
+@media (max-width: 600px) {
+  body {
+    background-color: lightgray;
+  }
+}
+```
+
+**When to use:**
+- To create responsive designs that adapt to different screen sizes.
+- To optimize layouts for mobile, tablet, and desktop views.
+
+---
+
+## Media Attributes
+
+**Media Attributes** specify the media type for which a particular CSS file should be applied. Common types include:
+
+- `all`: Default for all devices.
+- `screen`: For computer screens, tablets, and smartphones.
+- `print`: For printed materials and print previews.
+- `speech`: For screen readers.
+
+### Example
+```html
+<link rel="stylesheet" href="screen.css" media="screen">
+<link rel="stylesheet" href="print.css" media="print">
+```
+
+**When to use:**
+- When you want specific styles for print or screen readers.
+- To ensure your webpage is accessible and looks good when printed.
+
+---
+
+## Using Media Queries
+
+You can combine multiple conditions to create advanced responsive designs.
+
+### Example: Combining Conditions
+```css
+/* Styles for devices between 600px and 1200px */
+@media (min-width: 600px) and (max-width: 1200px) {
+  .container {
+    padding: 20px;
+  }
+}
+```
+
+### Example: Orientation
+```css
+/* Styles applied only in landscape mode */
+@media (orientation: landscape) {
+  body {
+    background-color: lightblue;
+  }
+}
+```
+
+**When to use:**
+- To create more targeted and precise designs.
+- To handle specific device orientations and resolutions.
+
+---
+
+## UI Breakpoints and Media Queries
+
+**Breakpoints** are specific screen widths where your design needs to adapt to provide a better user experience. Common breakpoints are based on popular device sizes.
+
+### Common Breakpoints
+- Small devices (phones): `max-width: 600px`
+- Medium devices (tablets): `min-width: 601px` and `max-width: 960px`
+- Large devices (desktops): `min-width: 961px`
+
+### Example: Responsive Design with Breakpoints
+```css
+/* Mobile styles */
+@media (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 601px) and (max-width: 960px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 961px) {
+  body {
+    font-size: 18px;
+  }
+}
+```
+
+**When to use:**
+- To ensure your design looks good on various screen sizes.
+- To provide an optimal experience for users on different devices.
+
+---
+
+This guide should help beginners understand the power of media queries and how they contribute to responsive web design. Let me know if you'd like to dive deeper into advanced responsive design techniques!
 
 
 
