@@ -2099,7 +2099,7 @@ A flex container with default settings (`flex-direction: row;` and `justify-cont
 
 ---
 
-This guide should help beginners fully grasp the power of Flexbox, with practical examples and clear visual explanations for better understanding.
+ 
 
 
 
