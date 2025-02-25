@@ -388,5 +388,158 @@ button.addEventListener('click', () => {
 });
 ```
 
+# Display in CSS
+
+## Introduction
+
+The `display` property in CSS is one of the most important properties for determining how elements are rendered on a web page. It controls the layout behavior of an element, dictating how it interacts with other elements and how it appears in the document flow.
+
+Understanding `display` is essential for designing layouts, organizing content, and creating responsive designs.
+
+---
+
+## Common Display Values
+
+### 1. `block`
+Elements with `display: block` take up the full width of their container by default, starting on a new line.
+
+**Examples of block elements:** `<div>`, `<p>`, `<h1>` - `<h6>`, `<section>`
+
+**CSS Example:**
+```css
+.block-element {
+  display: block;
+  background-color: lightblue;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+```
+**When to use:** Use `block` when you want elements to stack vertically and occupy the full width of the container.
+
+---
+
+### 2. `inline`
+Elements with `display: inline` do not start on a new line and only take up as much width as necessary.
+
+**Examples of inline elements:** `<span>`, `<a>`, `<strong>`
+
+**CSS Example:**
+```css
+.inline-element {
+  display: inline;
+  color: red;
+}
+```
+**When to use:** Use `inline` when you want elements to flow within the text without breaking the line.
+
+---
+
+### 3. `inline-block`
+Similar to `inline`, but allows you to set width and height.
+
+**CSS Example:**
+```css
+.inline-block-element {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background-color: coral;
+  margin: 5px;
+}
+```
+**When to use:** Useful for creating layouts where elements should sit side by side but still respect width and height properties.
+
+---
+
+### 4. `none`
+Removes the element from the document flow entirely; it will not appear on the page.
+
+**CSS Example:**
+```css
+.hidden-element {
+  display: none;
+}
+```
+**When to use:** Use `none` to hide elements completely without removing them from the HTML.
+
+---
+
+### 5. `flex`
+Enables a flex container for flexible layouts using the Flexbox model.
+
+**CSS Example:**
+```css
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-item {
+  background-color: lightgreen;
+  padding: 20px;
+}
+```
+**When to use:** Ideal for creating responsive layouts and aligning items dynamically within a container.
+
+---
+
+### 6. `grid`
+Enables a grid layout system for two-dimensional designs.
+
+**CSS Example:**
+```css
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.grid-item {
+  background-color: lightcoral;
+  padding: 20px;
+}
+```
+**When to use:** Perfect for creating complex layouts with rows and columns.
+
+---
+
+## Advanced Display Values
+
+### 1. `table`
+Makes an element behave like a table.
+
+**CSS Example:**
+```css
+.table-style {
+  display: table;
+  width: 100%;
+  border: 1px solid black;
+}
+```
+**When to use:** Use when you need table-like behavior without using actual HTML table elements.
+
+### 2. `list-item`
+Displays the element as a list item with a bullet or number.
+
+**CSS Example:**
+```css
+.custom-list {
+  display: list-item;
+  list-style-type: square;
+}
+```
+**When to use:** For custom lists or when creating list structures without using `<ul>` or `<ol>`.
+
+---
+
+## Best Practices
+
+1. **Use semantic HTML:** Only override default display values when necessary.
+2. **Minimize `display: none`:** Overusing it can confuse screen readers and accessibility tools.
+3. **Leverage Flexbox and Grid:** These provide modern, responsive layout techniques.
+4. **Test Responsiveness:** Always check how your display settings work on different screen sizes.
+
+---
+
 
 
