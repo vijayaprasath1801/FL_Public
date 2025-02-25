@@ -132,7 +132,7 @@ p::first-letter {
 
 ---
 
-# Using Combinators in CSS
+## Using Combinators
 
 CSS combinators define the relationship between selectors, allowing you to target elements based on their relationship in the HTML structure. Understanding combinators helps in applying styles more precisely and efficiently.
 
