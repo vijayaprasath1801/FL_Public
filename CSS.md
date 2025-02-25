@@ -1757,4 +1757,159 @@ button {
 
 ---
 
+## Flexbox
+
+## Introduction to Flexbox
+
+Flexbox is a CSS layout module designed to help you arrange elements efficiently within a container. It enables flexible and responsive layouts that adjust dynamically across different screen sizes.
+
+**When to use:**
+- Align items horizontally or vertically.
+- Distribute space evenly between items.
+- Create responsive designs without relying on floats or positioning.
+
+To enable flexbox on a container:
+
+```css
+.container {
+  display: flex;
+}
+```
+
+---
+
+## Container Configuration
+
+### Flex Direction
+Defines the main axis along which the flex items are laid out.
+
+```css
+.container {
+  display: flex;
+  flex-direction: row; /* row | row-reverse | column | column-reverse */
+}
+```
+
+- `row` (default): Items are laid out horizontally.
+- `column`: Items are laid out vertically.
+- `row-reverse`: Items are laid out horizontally in reverse order.
+- `column-reverse`: Items are laid out vertically in reverse order.
+
+**Example:**
+```css
+.container {
+  display: flex;
+  flex-direction: column;
+}
+```
+
+### Flex Wrap
+Controls whether items wrap to the next line if there's not enough space.
+
+```css
+.container {
+  display: flex;
+  flex-wrap: wrap; /* nowrap | wrap | wrap-reverse */
+}
+```
+
+- `nowrap`: All items stay on a single line (default).
+- `wrap`: Items wrap onto multiple lines from top to bottom.
+- `wrap-reverse`: Items wrap from bottom to top.
+
+### Justification
+Aligns items along the main axis (horizontal for `row`, vertical for `column`).
+
+```css
+.container {
+  display: flex;
+  justify-content: center; /* flex-start | flex-end | center | space-between | space-around | space-evenly */
+}
+```
+
+**Usage Examples:**
+- `flex-start`: Aligns items to the start.
+- `center`: Centers items.
+- `space-between`: Evenly distributes items, with no space at the edges.
+
+### Aligning Items
+Aligns items along the cross axis (perpendicular to the main axis).
+
+```css
+.container {
+  display: flex;
+  align-items: center; /* stretch | flex-start | flex-end | center | baseline */
+}
+```
+
+**Example:**
+```css
+.container {
+  display: flex;
+  align-items: flex-end;
+}
+```
+
+---
+
+## Item Configuration
+
+### Grow and Shrink
+Controls how items expand or contract relative to available space.
+
+```css
+.item {
+  flex-grow: 1; /* Default is 0 */
+  flex-shrink: 1; /* Default is 1 */
+}
+```
+
+- `flex-grow`: Defines how much the item should grow.
+- `flex-shrink`: Defines how much the item should shrink.
+
+**Example:**
+```css
+.item {
+  flex-grow: 2;
+}
+```
+This item will grow twice as much as items with `flex-grow: 1`.
+
+### Order
+Controls the order of items regardless of their position in the HTML.
+
+```css
+.item {
+  order: 2; /* Default is 0 */
+}
+```
+
+**Example:**
+```css
+.item-first {
+  order: 1;
+}
+.item-second {
+  order: 2;
+}
+```
+
+### Overriding Alignment
+Allows individual items to override the container's alignment settings.
+
+```css
+.item {
+  align-self: center; /* auto | flex-start | flex-end | center | baseline | stretch */
+}
+```
+
+**Example:**
+```css
+.item {
+  align-self: flex-end;
+}
+```
+
+---
+
 
