@@ -389,7 +389,7 @@ You can combine multiple conditions to create advanced responsive designs.
 
 ---
 
-## UI Breakpoints and Media Queries
+## Display
 
 **Breakpoints** are specific screen widths where your design needs to adapt to provide a better user experience. Common breakpoints are based on popular device sizes.
 
