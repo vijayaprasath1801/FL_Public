@@ -1623,4 +1623,138 @@ h3 {
 
 ---
 
+## Spacing and Alignment
+
+## Handling Whitespace
+
+Whitespace in CSS refers to the space around elements and inside elements' content. You can control whitespace using the `white-space` property.
+
+### Syntax:
+```css
+white-space: normal | nowrap | pre | pre-wrap | pre-line;
+```
+
+### Example:
+```css
+p {
+  white-space: pre-wrap; /* Preserves whitespace and breaks lines if needed */
+}
+```
+
+### When to Use:
+- `normal`: Default value. Collapses whitespace.
+- `nowrap`: Prevents text from wrapping.
+- `pre`: Preserves whitespace and line breaks.
+- `pre-wrap`: Preserves whitespace and wraps text when needed.
+- `pre-line`: Collapses whitespace but preserves line breaks.
+
+---
+
+## Vertical Alignment
+
+The `vertical-align` property controls the vertical positioning of inline elements relative to their container.
+
+### Syntax:
+```css
+vertical-align: baseline | top | middle | bottom;
+```
+
+### Example:
+```css
+img {
+  vertical-align: middle;
+}
+```
+
+### When to Use:
+- Align images or text elements vertically within their container.
+
+---
+
+## Break
+
+The `break` properties in CSS help control page, column, and line breaks.
+
+### Syntax:
+```css
+break-before: auto | avoid | always;
+break-after: auto | avoid | always;
+```
+
+### Example:
+```css
+h1 {
+  break-after: always; /* Forces a page break after the element */
+}
+```
+
+### When to Use:
+- For printed documents or paged media to control where breaks occur.
+
+---
+
+## Word Wrap
+
+The `word-wrap` property allows long words to be broken and wrap onto the next line.
+
+### Syntax:
+```css
+word-wrap: normal | break-word;
+```
+
+### Example:
+```css
+div {
+  word-wrap: break-word;
+}
+```
+
+### When to Use:
+- Prevents overflow of long text in elements with restricted width.
+
+---
+
+## Page Break
+
+The `page-break` properties control how content breaks across pages when printing.
+
+### Syntax:
+```css
+page-break-before: auto | always | avoid;
+page-break-after: auto | always | avoid;
+```
+
+### Example:
+```css
+.print-section {
+  page-break-before: always;
+}
+```
+
+### When to Use:
+- Useful in print stylesheets for ensuring elements start on a new page.
+
+---
+
+## Cursor
+
+The `cursor` property changes the mouse pointer when hovering over an element.
+
+### Syntax:
+```css
+cursor: pointer | default | text | move | not-allowed;
+```
+
+### Example:
+```css
+button {
+  cursor: pointer;
+}
+```
+
+### When to Use:
+- To indicate interactive elements or provide feedback to users based on interaction possibilities.
+
+---
+
 
