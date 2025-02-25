@@ -300,7 +300,7 @@ p {
 
 ---
 
-# Media Queries and Responsive Design in CSS
+## Media Queries
 
 ## Table of Contents
 
@@ -428,7 +428,7 @@ You can combine multiple conditions to create advanced responsive designs.
 
 ---
 
-# Positioning Content in CSS
+## Positioning Content
 
 ## Introduction
 
