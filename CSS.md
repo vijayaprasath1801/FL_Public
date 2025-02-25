@@ -1117,3 +1117,161 @@ Elements with `fixed` positioning are removed from the document flow and positio
 
 ---
 
+# Z-Index
+
+## Introduction
+
+In CSS, the `z-index` property controls the vertical stacking order of elements on a webpage. Elements with a higher `z-index` value appear in front of those with a lower value. This property only works on elements that have a `position` value other than `static` (i.e., `relative`, `absolute`, `fixed`, or `sticky`).
+
+Understanding how to use `z-index` is crucial for managing overlapping elements, creating complex layouts, and designing interactive UI components.
+
+---
+
+## Syntax
+
+```css
+selector {
+  position: relative; /* or absolute, fixed, sticky */
+  z-index: value; /* integer value */
+}
+```
+
+**Value Explanation:**
+- Positive integers: Bring the element forward (e.g., `z-index: 1;`)
+- Negative integers: Send the element backward (e.g., `z-index: -1;`)
+- `auto`: Default stacking behavior (inherits from parent)
+
+---
+
+## Basic Example
+
+Let's create two overlapping boxes:
+
+```html
+<div class="box1">Box 1</div>
+<div class="box2">Box 2</div>
+```
+
+```css
+.box1 {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background-color: lightblue;
+  z-index: 1;
+}
+
+.box2 {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background-color: lightcoral;
+  margin-top: -150px;
+  margin-left: 50px;
+  z-index: 2;
+}
+```
+
+**Explanation:**
+- `Box 2` overlaps `Box 1` because it has a higher `z-index` value.
+
+---
+
+## When to Use `z-index`
+
+- **Modal dialogs:** To ensure the modal appears above the rest of the content.
+- **Dropdown menus:** To bring the dropdown above other elements.
+- **Tooltips:** To display tooltips on top of all other content.
+- **Sticky headers or footers:** Ensure headers remain visible when scrolling.
+
+---
+
+## Common Pitfalls
+
+### 1. No `position` Set
+The `z-index` won’t work unless the element has a `position` value other than `static`.
+
+**Incorrect:**
+```css
+.element {
+  z-index: 10;
+}
+```
+
+**Correct:**
+```css
+.element {
+  position: relative;
+  z-index: 10;
+}
+```
+
+### 2. Nested Stacking Contexts
+A new stacking context is created when elements have properties like:
+- `position` with a `z-index` value.
+- `opacity` less than 1.
+- `transform` property applied.
+
+If `z-index` doesn't behave as expected, check if a parent element is creating a new stacking context.
+
+### Example:
+```css
+.parent {
+  position: relative;
+  z-index: 1;
+  opacity: 0.9; /* Creates a new stacking context */
+}
+
+.child {
+  position: absolute;
+  z-index: 10;
+}
+```
+In this case, `.child` cannot escape the stacking context created by `.parent`.
+
+---
+
+## Advanced Usage
+
+### Modal Example with `z-index`
+
+```html
+<div class="background">Background Content</div>
+<div class="modal">Modal Window</div>
+```
+
+```css
+.background {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  background-color: lightgrey;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background-color: white;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+```
+
+**Explanation:**
+- The modal appears above all content due to the high `z-index` value.
+- The background content remains behind the modal.
+
+---
+
+## Best Practices
+
+1. **Use as few `z-index` values as possible** to avoid complexity.
+2. **Organize elements in layers** logically (background, content, overlay).
+3. **Be cautious with nested stacking contexts**, as they can lead to unexpected behavior.
+4. **Use higher values for overlays** (e.g., modals, popups).
+5. **Debug using browser dev tools** to inspect stacking order.
+
+---
