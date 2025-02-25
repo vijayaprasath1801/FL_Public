@@ -860,4 +860,127 @@ When all child elements inside a container are floated, the parent container can
 
 ---
 
+## Inline Block
+
+## Introduction
+
+The `inline-block` value in CSS is used with the `display` property. It allows elements to flow inline like `inline` elements, but still lets you set width, height, and margin properties like `block` elements. This makes `inline-block` incredibly useful for layout designs that need both structure and inline behavior.
+
+**Syntax:**
+```css
+.element {
+  display: inline-block;
+}
+```
+
+## When to Use `inline-block`
+
+- When you want elements to sit next to each other but still be able to set their width and height.
+- When you need elements to wrap naturally within a container.
+- Useful for creating navigation menus, button groups, or layout grids.
+
+## Basic Example
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    .box {
+      display: inline-block;
+      width: 150px;
+      height: 150px;
+      margin: 10px;
+      background-color: lightblue;
+      text-align: center;
+      line-height: 150px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">Box 1</div>
+  <div class="box">Box 2</div>
+  <div class="box">Box 3</div>
+</body>
+</html>
+```
+
+**Explanation:**
+- All three boxes will appear side by side.
+- You can control width, height, and margin independently for each box.
+
+## Key Features of `inline-block`
+
+1. **Maintains Block-Level Properties:**
+   - You can set `width`, `height`, `padding`, and `margin`.
+
+2. **Wraps Inline:**
+   - Multiple elements appear on the same line unless there isn’t enough space, in which case they wrap.
+
+3. **Respects Vertical Alignment:**
+   - Can be aligned using the `vertical-align` property.
+
+## Handling Whitespace Issue
+
+When using `inline-block`, whitespace (like spaces, tabs, or newlines in the HTML) can create unintended gaps between elements.
+
+**Problematic Example:**
+```html
+<div class="box">Box 1</div> <div class="box">Box 2</div>
+```
+This space between `</div>` and `<div>` results in a visible gap.
+
+**Solutions:**
+- Remove whitespace between elements.
+- Use comments to eliminate space:
+  ```html
+  <div class="box">Box 1</div><!--
+  --><div class="box">Box 2</div>
+  ```
+- Set `font-size: 0;` on the parent container and reset it on child elements:
+  ```css
+  .container {
+    font-size: 0;
+  }
+  .box {
+    font-size: 16px;
+  }
+  ```
+
+## Real-World Use Case: Navigation Menu
+
+```html
+<nav>
+  <ul>
+    <li class="menu-item">Home</li>
+    <li class="menu-item">About</li>
+    <li class="menu-item">Contact</li>
+  </ul>
+</nav>
+
+<style>
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+
+  .menu-item {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+
+  .menu-item:hover {
+    background-color: #555;
+  }
+</style>
+```
+
+**Explanation:**
+- Menu items display inline.
+- You can control padding and hover effects.
+
 
