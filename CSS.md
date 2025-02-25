@@ -1477,3 +1477,150 @@ Another method using `transform` for more advanced centering.
 With these techniques, you can handle nearly every centering challenge in CSS!
 
 ---
+## Text Styles
+
+## Fonts
+
+### Font Families
+
+Font families define the typeface used in your web content. CSS provides a list of generic font families like `serif`, `sans-serif`, and `monospace`.
+
+**Syntax:**
+```css
+font-family: 'Font Name', fallback-font;
+```
+
+**Example:**
+```css
+body {
+  font-family: 'Arial', sans-serif;
+}
+```
+**When to use:**
+- Set a consistent look across browsers.
+- Use fallbacks in case the main font isn't available.
+
+### Font Settings
+
+CSS allows customizing various font properties:
+
+- **font-size:** Controls text size.
+- **font-weight:** Sets thickness (normal, bold).
+- **font-style:** Italicizes text.
+- **line-height:** Adjusts spacing between lines.
+
+**Example:**
+```css
+p {
+  font-size: 16px;
+  font-weight: bold;
+  font-style: italic;
+  line-height: 1.5;
+}
+```
+**When to use:**
+- Improve readability and hierarchy in your design.
+
+---
+
+## Text Formatting
+
+### Horizontal Alignment
+
+Align text horizontally using the `text-align` property.
+
+**Syntax:**
+```css
+text-align: left | right | center | justify;
+```
+
+**Example:**
+```css
+h1 {
+  text-align: center;
+}
+```
+**When to use:**
+- Center headlines or align text based on design requirements.
+
+### Indent
+
+The `text-indent` property specifies the indentation of the first line.
+
+**Example:**
+```css
+p {
+  text-indent: 2em;
+}
+```
+**When to use:**
+- Add indentation for readability in long-form text.
+
+### Overflow
+
+Controls how text is displayed when it exceeds its container.
+
+**Example:**
+```css
+div {
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+**When to use:**
+- Use when text content might exceed its container.
+
+### Quotes
+
+Customizes the quotation marks used for `<q>` elements.
+
+**Example:**
+```css
+q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+```
+**When to use:**
+- Customize quotes for different languages or design styles.
+
+### Shadow
+
+Adds shadow effects to text.
+
+**Syntax:**
+```css
+text-shadow: horizontal vertical blur color;
+```
+
+**Example:**
+```css
+h2 {
+  text-shadow: 2px 2px 5px gray;
+}
+```
+**When to use:**
+- Add depth or emphasis to headings.
+
+### Capitalization
+
+Controls the transformation of text capitalization.
+
+**Syntax:**
+```css
+text-transform: uppercase | lowercase | capitalize;
+```
+
+**Example:**
+```css
+h3 {
+  text-transform: uppercase;
+}
+```
+**When to use:**
+- Apply consistent capitalization across elements for better visual hierarchy.
+
+---
+
+
