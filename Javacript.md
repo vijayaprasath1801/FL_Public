@@ -1091,7 +1091,7 @@ Processing arrays is crucial in data manipulation tasks, such as applying discou
 
 ---
 
-# Browser Environment
+## Browser Environment
 
 ## Browser Object Model (BOM)
 
@@ -1201,7 +1201,9 @@ console.log("Platform: " + navigator.platform);
 console.log("Cookies Enabled: " + navigator.cookieEnabled);
 ```
 
-## Document Object Model (DOM)
+## DOM Elements
+
+## Document Object Model
 
 ## Introduction
 The **Document Object Model (DOM)** is a programming interface that represents the structure of a web document. It allows developers to interact with and manipulate HTML and XML documents programmatically using JavaScript.
