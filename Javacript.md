@@ -1635,6 +1635,140 @@ console.log(computedStyle.color); // Outputs the applied color
 
 ---
 
+# Events
+---
+
+## Event Registration
+### Explanation
+Event registration in JavaScript allows you to attach event handlers to HTML elements so they can respond to user interactions like clicks, keypresses, and more.
+
+### Example
+```javascript
+const button = document.getElementById("myButton");
+button.addEventListener("click", function() {
+    alert("Button clicked!");
+});
+```
+
+### Use Case
+Use event registration to enhance user interactivity, such as handling form submissions or button clicks.
+
+---
+
+## Event Propagation
+### Explanation
+Event propagation determines the order in which events fire in the DOM hierarchy. It consists of three phases:
+1. Capturing Phase (Event travels from root to the target)
+2. Target Phase (Event reaches the target element)
+3. Bubbling Phase (Event travels back up to the root)
+
+### Example
+```javascript
+document.getElementById("parent").addEventListener("click", function() {
+    alert("Parent clicked!");
+}, true); // Capturing phase
+
+document.getElementById("child").addEventListener("click", function() {
+    alert("Child clicked!");
+}); // Bubbling phase
+```
+
+### Use Case
+Use event propagation to control how events should be handled, either from parent to child or vice versa.
+
+---
+
+## Unregistering Events
+### Explanation
+To prevent memory leaks or unwanted behaviors, you can remove event listeners using `removeEventListener`.
+
+### Example
+```javascript
+function logClick() {
+    console.log("Clicked!");
+}
+
+button.addEventListener("click", logClick);
+button.removeEventListener("click", logClick);
+```
+
+### Use Case
+Use event unregistration when dynamically adding/removing elements or disabling interactions.
+
+---
+
+## Event Interface
+### Explanation
+The Event interface provides properties and methods that describe an event and allow manipulation.
+
+### Example
+```javascript
+document.addEventListener("click", function(event) {
+    console.log("Event type:", event.type);
+    console.log("Target element:", event.target.tagName);
+});
+```
+
+### Use Case
+Use the event interface to access event-related properties like event type, target element, and coordinates.
+
+---
+
+## Common Event Properties
+### Explanation
+Some frequently used event properties include:
+- `event.target` - Identifies the element where the event occurred.
+- `event.type` - Specifies the type of event.
+- `event.clientX`, `event.clientY` - Gives mouse position.
+
+### Example
+```javascript
+document.addEventListener("click", function(event) {
+    console.log(`Clicked at (${event.clientX}, ${event.clientY})`);
+});
+```
+
+### Use Case
+Use these properties to handle user interactions based on event characteristics.
+
+---
+
+## Cancelling Events
+### Explanation
+Prevent the default behavior of an event using `event.preventDefault()`.
+
+### Example
+```javascript
+document.getElementById("myLink").addEventListener("click", function(event) {
+    event.preventDefault(); // Stops the default link navigation
+    alert("Link click prevented!");
+});
+```
+
+### Use Case
+Use this to stop form submissions, prevent link navigation, or override browser defaults.
+
+---
+
+## Exploring Events
+### Explanation
+JavaScript provides various types of events such as:
+- **Mouse Events** (`click`, `dblclick`, `mousemove`)
+- **Keyboard Events** (`keydown`, `keyup`)
+- **Form Events** (`submit`, `input`)
+
+### Example
+```javascript
+document.addEventListener("keydown", function(event) {
+    console.log(`Key pressed: ${event.key}`);
+});
+```
+
+### Use Case
+Use different event types for interactive applications like games, forms, and user inputs.
+
+---
+
 
 
 
