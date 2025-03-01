@@ -540,4 +540,177 @@ greet(); // Hello, Guest!
 
 ---
 
+## Objects
+
+### What are Objects?
+Objects in JavaScript are collections of key-value pairs. They allow us to store, organize, and manipulate data efficiently.
+
+### Syntax
+```js
+const person = {
+  firstName: "John",
+  lastName: "Doe",
+  age: 30,
+  greet: function() {
+    return `Hello, my name is ${this.firstName} ${this.lastName}.`;
+  }
+};
+console.log(person.greet());
+```
+
+### Use Case
+Objects are useful when dealing with structured data, such as representing users, products, or configurations.
+
+```js
+const car = {
+  brand: "Toyota",
+  model: "Camry",
+  year: 2022,
+  displayInfo: function() {
+    return `${this.brand} ${this.model}, ${this.year}`;
+  }
+};
+
+console.log(car.displayInfo());
+```
+
+---
+
+## Constructors
+
+### What are Constructors?
+A constructor function is a special type of function used to create multiple object instances with the same structure.
+
+### Syntax
+```js
+function Person(firstName, lastName, age) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+  this.greet = function() {
+    return `Hello, I'm ${this.firstName} ${this.lastName}.`;
+  };
+}
+
+const john = new Person("John", "Doe", 30);
+console.log(john.greet());
+```
+
+### Use Case
+Constructors are useful when creating multiple instances of objects with the same structure, like users in an application.
+
+```js
+function Car(brand, model, year) {
+  this.brand = brand;
+  this.model = model;
+  this.year = year;
+  this.getDetails = function() {
+    return `${this.brand} ${this.model} (${this.year})`;
+  };
+}
+
+const car1 = new Car("Honda", "Civic", 2023);
+const car2 = new Car("Tesla", "Model 3", 2022);
+
+console.log(car1.getDetails());
+console.log(car2.getDetails());
+```
+
+---
+
+## Prototypes
+
+### What are Prototypes?
+In JavaScript, prototypes allow objects to inherit properties and methods from a shared prototype object, reducing memory usage.
+
+### Syntax
+```js
+function Animal(name) {
+  this.name = name;
+}
+
+Animal.prototype.speak = function() {
+  return `${this.name} makes a noise.`;
+};
+
+const dog = new Animal("Dog");
+console.log(dog.speak());
+```
+
+### Use Case
+Prototypes help share methods between object instances, reducing memory overhead and improving performance.
+
+```js
+function Book(title, author) {
+  this.title = title;
+  this.author = author;
+}
+
+Book.prototype.getDetails = function() {
+  return `${this.title} by ${this.author}`;
+};
+
+const book1 = new Book("1984", "George Orwell");
+const book2 = new Book("To Kill a Mockingbird", "Harper Lee");
+
+console.log(book1.getDetails());
+console.log(book2.getDetails());
+```
+
+---
+
+## Inheritance
+
+### What is Inheritance?
+Inheritance allows an object to derive properties and methods from another object, enabling code reuse and modularity.
+
+### Syntax
+```js
+function Employee(name, jobTitle) {
+  this.name = name;
+  this.jobTitle = jobTitle;
+}
+
+Employee.prototype.getDetails = function() {
+  return `${this.name} works as a ${this.jobTitle}.`;
+};
+
+function Manager(name, jobTitle, department) {
+  Employee.call(this, name, jobTitle);
+  this.department = department;
+}
+
+Manager.prototype = Object.create(Employee.prototype);
+Manager.prototype.constructor = Manager;
+
+const manager = new Manager("Alice", "Project Manager", "IT");
+console.log(manager.getDetails());
+```
+
+### Use Case
+Inheritance is useful when creating specialized objects based on a common structure.
+
+```js
+function Vehicle(type, brand) {
+  this.type = type;
+  this.brand = brand;
+}
+
+Vehicle.prototype.getInfo = function() {
+  return `This is a ${this.brand} ${this.type}.`;
+};
+
+function Truck(brand, loadCapacity) {
+  Vehicle.call(this, "Truck", brand);
+  this.loadCapacity = loadCapacity;
+}
+
+Truck.prototype = Object.create(Vehicle.prototype);
+Truck.prototype.constructor = Truck;
+
+const truck = new Truck("Ford", "10 tons");
+console.log(truck.getInfo());
+```
+
+---
 
