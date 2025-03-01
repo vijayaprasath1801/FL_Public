@@ -91,7 +91,7 @@
    - [Exploring Events](#exploring-events)
 
 ---
-#& JavaScript Essentials
+## JavaScript Essentials
 
 Welcome to **JavaScript Essentials**! This guide is designed for beginners to learn modern JavaScript (ES6+) with detailed explanations, code examples, and practical use cases.
 
