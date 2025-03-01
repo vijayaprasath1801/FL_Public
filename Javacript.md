@@ -1506,7 +1506,135 @@ document.getElementById("box").style.backgroundColor = "blue";
 
 
 
- 
+## Dynamic Styling
+
+Dynamic styling allows developers to manipulate the appearance of elements on a webpage programmatically. This is useful for creating interactive interfaces, themes, and animations without manually modifying CSS files.
+
+---
+
+## Changing Style Sheets
+Style sheets define the look and feel of a webpage. You can dynamically change the active style sheet using JavaScript to switch themes or layouts.
+
+### Example:
+```javascript
+function changeStyleSheet(sheet) {
+    document.getElementById('stylesheet').setAttribute('href', sheet);
+}
+```
+### Use Case:
+- Allowing users to switch between dark mode and light mode.
+
+---
+
+## Enabling Style Sheets
+You can enable or disable stylesheets by modifying their `disabled` property.
+
+### Example:
+```javascript
+let stylesheet = document.getElementById("stylesheet");
+stylesheet.disabled = true; // Disables the stylesheet
+stylesheet.disabled = false; // Enables the stylesheet
+```
+### Use Case:
+- Temporarily hiding certain styles without removing them from the document.
+
+---
+
+## Choosing a Style Sheet
+A website may have multiple stylesheets, and JavaScript allows users to select one.
+
+### Example:
+```javascript
+function selectStyleSheet(title) {
+    let links = document.querySelectorAll("link[rel='stylesheet']");
+    links.forEach(link => {
+        link.disabled = link.title !== title;
+    });
+}
+```
+### Use Case:
+- Allowing users to switch between different themes dynamically.
+
+---
+
+## Alternate Style Sheets
+Websites can provide alternate stylesheets that users can activate.
+
+### Example:
+```html
+<link rel="alternate stylesheet" title="dark-mode" href="dark.css">
+```
+### Use Case:
+- Providing users with alternative color schemes or layouts.
+
+---
+
+## Using Style Elements
+You can create new `<style>` elements dynamically and inject CSS rules.
+
+### Example:
+```javascript
+let style = document.createElement("style");
+style.innerHTML = "body { background-color: lightblue; }";
+document.head.appendChild(style);
+```
+### Use Case:
+- Adding or modifying styles dynamically without external stylesheets.
+
+---
+
+## Modifying Rules
+Modify existing CSS rules within a stylesheet using JavaScript.
+
+### Example:
+```javascript
+let sheet = document.styleSheets[0];
+sheet.insertRule("body { background-color: yellow; }", sheet.cssRules.length);
+```
+### Use Case:
+- Dynamically changing styling rules based on user interactions.
+
+---
+
+## Modifying Classes
+Adding, removing, and toggling classes dynamically affects element styles.
+
+### Example:
+```javascript
+document.getElementById("myElement").classList.add("new-class");
+document.getElementById("myElement").classList.remove("old-class");
+document.getElementById("myElement").classList.toggle("toggle-class");
+```
+### Use Case:
+- Applying animations or theme changes using predefined CSS classes.
+
+---
+
+## Modifying Inline Styles
+You can modify individual element styles using JavaScript.
+
+### Example:
+```javascript
+document.getElementById("box").style.backgroundColor = "red";
+```
+### Use Case:
+- Changing the appearance of an element in response to user actions.
+
+---
+
+## Computed Style
+To get the final, computed styles applied to an element, use `getComputedStyle()`.
+
+### Example:
+```javascript
+let computedStyle = getComputedStyle(document.getElementById("box"));
+console.log(computedStyle.color); // Outputs the applied color
+```
+### Use Case:
+- Determining actual styling properties applied by CSS, including inherited and overridden styles.
+
+---
+
 
 
 
