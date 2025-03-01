@@ -317,3 +317,227 @@ console.log(add(2, 3));
 Used in modern JavaScript applications to separate concerns and maintain code structure.
 
 ---
+
+## Promises & Async/Await
+### Explanation
+Promises provide a way to handle asynchronous operations in JavaScript, avoiding callback hell. Async/Await simplifies working with Promises by allowing us to write asynchronous code in a synchronous style.
+
+### Example
+```javascript
+function fetchData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve("Data fetched successfully"), 2000);
+  });
+}
+
+async function fetchAndLogData() {
+  try {
+    const data = await fetchData();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+fetchAndLogData();
+```
+
+### Use Case
+- Used in fetching data from APIs
+- Handling file reading operations
+- Managing database queries
+
+---
+
+## Classes and Inheritance
+### Explanation
+ES6 introduced the `class` syntax, making object-oriented programming easier in JavaScript. Inheritance allows one class to inherit properties and methods from another.
+
+### Example
+```javascript
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+  speak() {
+    console.log(`${this.name} makes a noise.`);
+  }
+}
+
+class Dog extends Animal {
+  speak() {
+    console.log(`${this.name} barks.`);
+  }
+}
+
+const dog = new Dog("Buddy");
+dog.speak();
+```
+
+### Use Case
+- Used in frameworks like React to create reusable components
+- Helps in creating modular, maintainable code
+
+---
+
+## Symbols & Iterators
+### Explanation
+Symbols are unique and immutable values often used as object keys. Iterators allow objects to be traversed using a standard protocol.
+
+### Example
+```javascript
+const uniqueKey = Symbol("id");
+const user = {
+  [uniqueKey]: 123,
+  name: "Alice",
+};
+console.log(user[uniqueKey]); // 123
+```
+
+Iterator Example:
+```javascript
+const iterable = {
+  [Symbol.iterator]: function () {
+    let step = 0;
+    return {
+      next() {
+        step++;
+        return step <= 3 ? { value: step, done: false } : { done: true };
+      },
+    };
+  },
+};
+for (const num of iterable) {
+  console.log(num); // 1, 2, 3
+}
+```
+
+### Use Case
+- Symbols are used for private properties in objects
+- Iterators are useful for custom data structures and loops
+
+---
+
+## Generators
+### Explanation
+Generators provide a way to pause and resume execution of a function using the `yield` keyword.
+
+### Example
+```javascript
+function* generatorExample() {
+  yield "Hello";
+  yield "World";
+}
+const gen = generatorExample();
+console.log(gen.next().value); // Hello
+console.log(gen.next().value); // World
+```
+
+### Use Case
+- Used in implementing iterators
+- Managing async operations efficiently
+
+---
+
+## Set and Map
+### Explanation
+`Set` stores unique values, while `Map` holds key-value pairs.
+
+### Example
+```javascript
+const mySet = new Set([1, 2, 3, 3]);
+console.log(mySet); // Set {1, 2, 3}
+
+const myMap = new Map();
+myMap.set("name", "Alice");
+console.log(myMap.get("name")); // Alice
+```
+
+### Use Case
+- Removing duplicate values
+- Efficiently storing and retrieving key-value data
+
+---
+
+## WeakSet and WeakMap
+### Explanation
+WeakSet and WeakMap are similar to Set and Map but store only weakly held objects.
+
+### Example
+```javascript
+let obj = { name: "John" };
+const weakMap = new WeakMap();
+weakMap.set(obj, "private data");
+console.log(weakMap.get(obj)); // private data
+```
+
+### Use Case
+- Used for memory optimization
+- Avoiding memory leaks
+
+---
+
+## ES6 String & Number Methods
+### Explanation
+New methods introduced for string and number manipulation.
+
+### Example
+```javascript
+console.log("Hello".repeat(3)); // HelloHelloHello
+console.log(Number.isInteger(5.5)); // false
+```
+
+### Use Case
+- Formatting strings
+- Validating numbers
+
+---
+
+## ES6 Array Methods
+### Explanation
+New array methods provide easy manipulation of array data.
+
+### Example
+```javascript
+const numbers = [1, 2, 3, 4];
+console.log(numbers.map((num) => num * 2)); // [2, 4, 6, 8]
+console.log(numbers.filter((num) => num > 2)); // [3, 4]
+```
+
+### Use Case
+- Transforming and filtering data in applications
+
+---
+
+## ES6 Object Methods
+### Explanation
+Methods like `Object.assign` and `Object.entries` make working with objects easier.
+
+### Example
+```javascript
+const obj = { name: "Alice", age: 25 };
+console.log(Object.entries(obj)); // [["name", "Alice"], ["age", 25]]
+```
+
+### Use Case
+- Copying and merging objects efficiently
+
+---
+
+## New ES6 Features
+### Explanation
+Other improvements include default parameters, template literals, and destructuring.
+
+### Example
+```javascript
+function greet(name = "Guest") {
+  console.log(`Hello, ${name}!`);
+}
+greet(); // Hello, Guest!
+```
+
+### Use Case
+- Writing cleaner and more readable code
+
+---
+
+
