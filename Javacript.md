@@ -786,5 +786,188 @@ console.log(bigNumber); // 9007199254740991n
 3. **Using `Symbol` to create unique object keys.**
 4. **Handling large integers beyond standard numeric limits with `BigInt`.**
 
+---
+
+## Miscellaneous Topics
+
+
+## Comparison Operators
+Comparison operators are used to compare values in JavaScript. They return boolean results (`true` or `false`).
+
+### Types of Comparison Operators
+- `==` (Equality): Checks if values are equal but does not check types.
+- `===` (Strict Equality): Checks if values and types are equal.
+- `!=` (Inequality): Checks if values are not equal.
+- `!==` (Strict Inequality): Checks if values and types are not equal.
+- `>` (Greater than)
+- `<` (Less than)
+- `>=` (Greater than or equal to)
+- `<=` (Less than or equal to)
+
+### Example
+```javascript
+console.log(5 == '5');  // true (only checks value)
+console.log(5 === '5'); // false (checks value and type)
+console.log(10 > 5);    // true
+console.log(10 !== 5);  // true
+```
+
+### Use Case
+Strict equality (`===`) is recommended to avoid unexpected type coercion.
+
+---
+
+## Variable Scope
+Scope determines the accessibility of variables.
+
+### Types of Scope
+- **Global Scope**: Variables declared outside functions are accessible anywhere.
+- **Function Scope**: Variables declared inside a function are accessible only within that function.
+- **Block Scope** (introduced in ES6): Variables declared with `let` or `const` inside a block `{}` are limited to that block.
+
+### Example
+```javascript
+let globalVar = "I'm global";
+
+function testScope() {
+    let functionVar = "I'm inside a function";
+    console.log(globalVar);  // Accessible
+    console.log(functionVar); // Accessible
+}
+
+console.log(globalVar);  // Accessible
+console.log(functionVar); // Error: functionVar is not defined
+```
+
+### Use Case
+Use `let` and `const` instead of `var` to avoid accidental global variable declarations.
+
+---
+
+## Strict Mode
+Strict mode helps catch common coding errors and prevents unsafe actions.
+
+### Enabling Strict Mode
+```javascript
+"use strict";
+
+x = 5; // Error: x is not defined
+```
+
+### Use Case
+Use strict mode in production code to avoid accidental bugs and enforce better coding practices.
+
+---
+
+## Functions
+Functions are blocks of reusable code.
+
+### Types of Functions
+- **Function Declarations**
+- **Function Expressions**
+- **Arrow Functions**
+
+### Example
+```javascript
+function add(a, b) {
+    return a + b;
+}
+console.log(add(5, 3)); // Output: 8
+```
+
+### Use Case
+Functions are useful for modular and reusable code.
+
+---
+
+## Context (`this` Keyword)
+`this` refers to the execution context of a function.
+
+### Example
+```javascript
+const obj = {
+    name: "Alice",
+    greet: function() {
+        console.log(`Hello, ${this.name}`);
+    }
+};
+obj.greet(); // Output: Hello, Alice
+```
+
+### Use Case
+Use `this` to refer to an object inside its method.
+
+---
+
+## Immediately Invoked Function Expressions (IIFE)
+IIFE is a function that executes immediately after being defined.
+
+### Example
+```javascript
+(function() {
+    console.log("I run immediately!");
+})();
+```
+
+### Use Case
+Used to prevent global namespace pollution.
+
+---
+
+## Namespaces
+JavaScript does not have built-in namespaces, but objects can be used to group related functions.
+
+### Example
+```javascript
+const MyNamespace = {
+    sayHello: function() {
+        console.log("Hello from MyNamespace!");
+    }
+};
+MyNamespace.sayHello();
+```
+
+### Use Case
+Avoid naming conflicts in large applications.
+
+---
+
+## Exceptions
+Exceptions handle errors in a structured way using `try...catch`.
+
+### Example
+```javascript
+try {
+    let x = y; // Error: y is not defined
+} catch (error) {
+    console.log("An error occurred: " + error.message);
+}
+```
+
+### Use Case
+Use exception handling to prevent application crashes.
+
+---
+
+## Promises
+Promises handle asynchronous operations.
+
+### Example
+```javascript
+let myPromise = new Promise((resolve, reject) => {
+    let success = true;
+    success ? resolve("Success!") : reject("Failure!");
+});
+
+myPromise.then(result => console.log(result))
+         .catch(error => console.log(error));
+```
+
+### Use Case
+Promises are used for handling API calls and asynchronous tasks.
+
+---
+
+
 
 
