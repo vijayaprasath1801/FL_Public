@@ -712,5 +712,79 @@ const truck = new Truck("Ford", "10 tons");
 console.log(truck.getInfo());
 ```
 
----
+## Properties
+
+## Arrays
+### Introduction
+An **array** in JavaScript is a special variable that can hold multiple values at once. Unlike traditional variables that store a single value, arrays allow for grouping related items together.
+
+### Syntax
+```javascript
+let fruits = ["Apple", "Banana", "Cherry"];
+console.log(fruits); // ["Apple", "Banana", "Cherry"]
+```
+
+### Use Cases
+1. **Storing multiple values:** Instead of declaring multiple variables, arrays can store related data in an organized way.
+2. **Iterating over data:** Arrays allow looping through values efficiently.
+3. **Manipulating data dynamically:** JavaScript provides many built-in methods to modify arrays, such as `push()`, `pop()`, `map()`, `filter()`, etc.
+
+### Example: Using Array Methods
+```javascript
+let numbers = [1, 2, 3, 4, 5];
+let squaredNumbers = numbers.map(num => num * num);
+console.log(squaredNumbers); // [1, 4, 9, 16, 25]
+```
+
+## Attributes
+### Introduction
+In JavaScript, **attributes** refer to properties that belong to HTML elements or objects. They provide additional metadata about the element or object, such as `id`, `class`, `name`, etc.
+
+### Syntax
+```javascript
+let element = document.getElementById("myElement");
+console.log(element.getAttribute("class")); // Output: some-class-name
+```
+
+### Use Cases
+1. **Manipulating HTML elements dynamically:** Attributes allow JavaScript to modify the behavior and styling of elements.
+2. **Accessing and setting custom data attributes:** Custom attributes store extra information about an element.
+3. **Controlling element properties:** Attributes control behaviors like `disabled`, `readonly`, `checked`, etc.
+
+### Example: Changing an Attribute
+```javascript
+let button = document.getElementById("submitButton");
+button.setAttribute("disabled", "true"); // Disables the button
+```
+
+## Special Types
+### Introduction
+JavaScript includes **special types** such as `null`, `undefined`, `Symbol`, and `BigInt`. These types serve specific purposes and differ from primitive data types like `string` or `number`.
+
+### Special Types in JavaScript
+1. **null:** Represents an explicitly empty or non-existent value.
+2. **undefined:** Represents an uninitialized variable.
+3. **Symbol:** A unique and immutable identifier.
+4. **BigInt:** Allows representation of integers larger than `Number.MAX_SAFE_INTEGER`.
+
+### Example: Special Types in Action
+```javascript
+let emptyValue = null;
+let notDefined;
+let uniqueId = Symbol("id");
+let bigNumber = BigInt(9007199254740991);
+
+console.log(emptyValue); // null
+console.log(notDefined); // undefined
+console.log(uniqueId); // Symbol(id)
+console.log(bigNumber); // 9007199254740991n
+```
+
+### Use Cases
+1. **Using `null` for intentional absence of values.**
+2. **Checking for undefined variables before accessing properties.**
+3. **Using `Symbol` to create unique object keys.**
+4. **Handling large integers beyond standard numeric limits with `BigInt`.**
+
+
 
