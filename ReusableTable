@@ -1,0 +1,46 @@
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+
+const DataTable = () => {
+  const data = [
+    { id: "GSMOS XML", name: "FircoSoft Request Format", formatType: "XML" },
+    { id: "DFMT 2", name: "Data Format 2", formatType: "JSN" },
+    { id: "DFMT 3", name: "Data Format 3", formatType: "CPY" },
+  ];
+
+  return (
+    <div className="p-4">
+      <div className="flex space-x-2 mb-4">
+        <Button variant="outline">Add</Button>
+        <Button variant="outline">Modify</Button>
+        <Button variant="outline">Delete</Button>
+        <Button variant="outline">Format Fields</Button>
+      </div>
+      
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Data Format ID</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Format Type CD</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>
+                <input type="checkbox" className="mr-2" />
+                <a href="#" className="text-blue-500 underline">{item.id}</a>
+              </TableCell>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.formatType}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+export default DataTable;
