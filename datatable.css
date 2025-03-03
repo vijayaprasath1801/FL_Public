@@ -1,0 +1,49 @@
+.container {
+  padding: 16px;
+  font-family: Arial, sans-serif;
+}
+
+.button-group {
+  margin-bottom: 16px;
+}
+
+.btn {
+  padding: 8px 12px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #e0e0e0;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.data-table th {
+  background-color: #f0f0f0;
+}
+
+.checkbox {
+  margin-right: 8px;
+}
+
+.link {
+  color: blue;
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: darkblue;
+}
