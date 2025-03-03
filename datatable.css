@@ -1,49 +1,40 @@
-.container {
-  padding: 16px;
-  font-family: Arial, sans-serif;
-}
+import { useRouter } from "next/router";
 
-.button-group {
-  margin-bottom: 16px;
-}
+const buttonConfig: Record<string, { label: string; action?: () => void }[]> = {
+  upload: [
+    { label: "Upload format", action: () => fileRef.current?.click() },
+    { label: "Delete" },
+    { label: "Format Fields" },
+  ],
+  settings: [
+    { label: "Delete" },
+    { label: "Format Fields" },
+  ],
+  edit: [
+    { label: "Modify" },
+    { label: "Delete" },
+    { label: "Format Fields" },
+  ],
+  default: [
+    { label: "Add" },
+    { label: "Delete" },
+    { label: "Format Fields" },
+  ],
+};
 
-.btn {
-  padding: 8px 12px;
-  margin-right: 8px;
-  border: 1px solid #ccc;
-  background-color: #f8f8f8;
-  cursor: pointer;
-}
+const MyComponent = () => {
+  const router = useRouter();
+  const screenName = router.pathname.replace("/", "") || "default"; // Extract screen name
 
-.btn:hover {
-  background-color: #e0e0e0;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table th,
-.data-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-}
-
-.data-table th {
-  background-color: #f0f0f0;
-}
-
-.checkbox {
-  margin-right: 8px;
-}
-
-.link {
-  color: blue;
-  text-decoration: underline;
-}
-
-.link:hover {
-  color: darkblue;
-}
+  return (
+    <Flexgrid columnGap={3}>
+      {buttonConfig[screenName]?.map((btn, index) => (
+        <FlexgridItem key={index}>
+          <Button kind="standard" onClick={btn.action || undefined}>
+            {btn.label}
+          </Button>
+        </FlexgridItem>
+      ))}
+    </Flexgrid>
+  );
+};
