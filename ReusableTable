@@ -9,6 +9,27 @@ const DataTable = () => {
     { id: "DFMT 3", name: "Data Format 3", formatType: "CPY" },
   ];
 
+
+const currentScreen = "dashboard"; // Replace with your dynamic screen value
+
+const buttonConfig = [
+  { key: "add", label: "Add", action: () => console.log("Add clicked") },
+  { key: "delete", label: "Delete", action: () => console.log("Delete clicked") },
+  { key: "modify", label: "Modify", action: () => console.log("Modify clicked") },
+  { 
+    key: "applyChanges", 
+    label: "Apply Changes", 
+    action: () => console.log("Apply Changes clicked"), 
+    screenVisibility: ["dashboard", "settings"] // Only show on these screens
+  },
+];
+
+// Filter buttons based on the current screen
+const visibleButtons = buttonConfig.filter(
+  (button) => !button.screenVisibility || button.screenVisibility.includes(currentScreen)
+);
+
+
   return (
     <div className="p-4">
       <div className="flex space-x-2 mb-4">
