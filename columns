@@ -1,0 +1,50 @@
+export const columns = [
+  {
+    key: "name",
+    label: "Name",
+    type: "text",
+    render: (value: string, onChange: (e: any) => void) => (
+      <input type="text" value={value} onChange={onChange} />
+    ),
+  },
+  {
+    key: "age",
+    label: "Age",
+    type: "number",
+    render: (value: number, onChange: (e: any) => void) => (
+      <input type="number" value={value} onChange={onChange} />
+    ),
+  },
+  {
+    key: "gender",
+    label: "Gender",
+    type: "select",
+    options: ["Male", "Female", "Other"],
+    render: (value: string, onChange: (e: any) => void) => (
+      <select value={value} onChange={onChange}>
+        <option value="">Select</option>
+        {["Male", "Female", "Other"].map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    ),
+  },
+  {
+    key: "dob",
+    label: "Date of Birth",
+    type: "date",
+    render: (value: string, onChange: (e: any) => void) => (
+      <input type="date" value={value} onChange={onChange} />
+    ),
+  },
+  {
+    key: "profilePicture",
+    label: "Profile Picture",
+    type: "file",
+    render: (value: File | null, onChange: (e: any) => void) => (
+      <input type="file" onChange={onChange} />
+    ),
+  },
+];
