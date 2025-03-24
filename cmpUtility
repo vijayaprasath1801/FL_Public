@@ -1,0 +1,14 @@
+const getPanelComponent = (selectedPanel: string, common: any) => {
+  switch (selectedPanel) {
+    case "Add":
+      return (common) => <DataFormatAdd common={common} />;
+    case "Modify":
+      return (common) => <DataFormatModify common={common} />;
+ 
+    default:
+      return null;
+  }
+};
+
+
+panelCmp={getPanelComponent(selectedPanel, common)}
