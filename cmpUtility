@@ -12,3 +12,33 @@ const getPanelComponent = (selectedPanel: string, common: any) => {
 
 
 panelCmp={getPanelComponent(selectedPanel, common)}
+
+
+
+const getPanelComponent = (
+  selectedPanel: string,
+  common: any
+) => {
+  switch (selectedPanel) {
+    case "Add":
+      return {
+        component: <DataFormatAdd common={common} />,
+        updateState: () => setState(""), 
+      };
+
+    case "Modify":
+      return {
+        component: <DataFormatModify common={common} />,
+        updateState: () => setState(""), 
+      };
+
+    default:
+      return { component: null, updateState: () => {} };
+  }
+};
+
+ 
+const { component, updateState } = getPanelComponent(selectedPanel, common);
+useEffect(() => {
+  updateState();
+}, [selectedPanel]);
