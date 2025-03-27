@@ -9,12 +9,12 @@ Handles form submission to dynamic API endpoints
 
 
 Breakdown of Steps
-1. Analysis (1-2 hours)
+1. Analysis
 Understand your current table structure and API endpoints
 Identify common patterns in your tables (required fields, data types, etc.)
 Plan the form component architecture
 
-2. Core Components (4-6 hours)
+2. Core Components
 Dynamic Form Generator: 
 Component that creates form fields based on table schema
 Generate input fields dynamically based on formSchema.
@@ -39,8 +39,8 @@ Ensure form adjusts dynamically for each table.
 
 
 3. Implementation Steps
-Step 1: Create Form Configuration (2 hours)
-Step 2: Dynamic Form Component (4-6 hours)
-Step 3: Modal Integration (2-3 hours)
-Step 4: API Service (2 hours)
-Step 5: Connect to Table (3-4 hours)
+Step 1: Create Form Configuration 
+Step 2: Dynamic Form Component
+Step 3: Modal Integration 
+Step 4: API Service 
+Step 5: Connect to Table
