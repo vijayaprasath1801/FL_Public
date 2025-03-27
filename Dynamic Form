@@ -1,29 +1,46 @@
-Creating a Reusable Dynamic Form: Analysis and Implementation Plan
-Overview
+Creating a Reusable Dynamic Form: Analysis and Implementation Plan : 
+
+Overview : 
 You need to create a dynamic form system that:
-
 Works with different tables/entities
-
-Supports both "Add" (empty form) and "Modify" (pre-filled form) modes
-
+Supports both "Add" (empty form) and "Modify" (pre-filled form) mode
 Dynamically generates form fields based on table columns
-
 Handles form submission to dynamic API endpoints
 
 
 Breakdown of Steps
 1. Analysis (1-2 hours)
 Understand your current table structure and API endpoints
-
 Identify common patterns in your tables (required fields, data types, etc.)
-
 Plan the form component architecture
 
 2. Core Components (4-6 hours)
-Dynamic Form Generator: Component that creates form fields based on table schema
+Dynamic Form Generator: 
+Component that creates form fields based on table schema
+Generate input fields dynamically based on formSchema.
+Pre-fill values when modifying an existing row.
 
-Form State Management: Handle form data, validation, and submission
+Form State Management: 
+Handle form data, validation, and submission
+Create a schema that defines:
+Field names (based on table columns).
+Field types (text, number, select, etc.).
+Validation rules (optional, required, max length).
 
-Modal Wrapper: Component to display the form in a modal
+Modal Wrapper: 
+Component to display the form in a modal
+Clicking Modify should pass the row’s data to the form.
+Clicking Add should open an empty form.
 
-API Service: Generic service to handle different endpoints
+API Service: 
+Generic service to handle different endpoints
+Pass schema and API URLs as props.
+Ensure form adjusts dynamically for each table.
+
+
+3. Implementation Steps
+Step 1: Create Form Configuration (2 hours)
+Step 2: Dynamic Form Component (4-6 hours)
+Step 3: Modal Integration (2-3 hours)
+Step 4: API Service (2 hours)
+Step 5: Connect to Table (3-4 hours)
