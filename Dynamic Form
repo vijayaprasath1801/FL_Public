@@ -1,0 +1,11 @@
+Creating a Reusable Dynamic Form: Analysis and Implementation Plan
+Overview
+You need to create a dynamic form system that:
+
+Works with different tables/entities
+
+Supports both "Add" (empty form) and "Modify" (pre-filled form) modes
+
+Dynamically generates form fields based on table columns
+
+Handles form submission to dynamic API endpoints
