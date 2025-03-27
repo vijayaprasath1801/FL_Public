@@ -9,3 +9,8 @@ Supports both "Add" (empty form) and "Modify" (pre-filled form) modes
 Dynamically generates form fields based on table columns
 
 Handles form submission to dynamic API endpoints
+
+
+Breakdown of Steps
+1. Analysis (1-2 hours)
+Understand your current table structure and API endpoints
