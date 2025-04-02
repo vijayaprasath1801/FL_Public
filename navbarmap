@@ -1,0 +1,66 @@
+import { useNavigate } from "react-router-dom";
+
+const navItems = [
+  {
+    label: "Administration",
+    route: "/",
+  },
+  {
+    label: "Data Source Configuration",
+    route: "/dataformats",
+    megaMenu: [
+      {
+        groupLabel: "Data Sources",
+        items: [{ label: "Data Sources", route: "/datasources" }],
+      },
+      {
+        groupLabel: "Data Sources Ingestion",
+        items: [
+          { label: "Connection Resources", route: "/connection-resources" },
+          { label: "Selection Filters", route: "/selection-filters" },
+          { label: "Ingestion", route: "/ingestion" },
+        ],
+      },
+    ],
+  },
+];
+
+const NavigationBar = () => {
+  const navigate = useNavigate();
+  return (
+    <Masthead>
+      <NavBar>
+        {navItems.map((item) => (
+          <NavBarItem
+            key={item.label}
+            defaultSelected={window.location.pathname === item.route}
+            onClick={() => navigate(item.route)}
+            label={item.label}
+          >
+            {item.megaMenu && (
+              <MegaMenu header={{ label: item.label }}>
+                {item.megaMenu.map((group) => (
+                  <MegaMenuItemGroup
+                    key={group.groupLabel}
+                    groupAriaLabel={group.groupLabel}
+                    header={{ label: group.groupLabel }}
+                  >
+                    {group.items.map((subItem) => (
+                      <MegaMenuItem
+                        key={subItem.label}
+                        label={subItem.label}
+                        onClick={() => navigate(subItem.route)}
+                      />
+                    ))}
+                  </MegaMenuItemGroup>
+                ))}
+              </MegaMenu>
+            )}
+          </NavBarItem>
+        ))}
+      </NavBar>
+    </Masthead>
+  );
+};
+
+export default NavigationBar;
