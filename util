@@ -1,0 +1,2 @@
+const formatId = (str) => str.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase());
+// Usage: formatId('dataFieldId') → "Data Field Id"
