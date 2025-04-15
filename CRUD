@@ -64,3 +64,13 @@ export const CRUD_MODES = {
   DELETE: "delete",
 };
 
+  switch (mode) {
+    case CRUD_MODES.CREATE:
+      return await dispatch(createPaymentAction(payload));
+    case CRUD_MODES.UPDATE:
+      return await dispatch(updatePaymentAction(payload));
+    case CRUD_MODES.DELETE:
+      return await dispatch(deletePaymentAction(payload));
+    default:
+      throw new Error("Unsupported CRUD mode: " + mode);
+  }
