@@ -56,8 +56,6 @@ const paymentSlice = createCRUDSlice("paymentDataset", fetchAllPaymentDatasetAct
 export const paymentReducer = paymentSlice.reducer;
 
 
-
-// constants.js
 export const CRUD_MODES = {
   CREATE: "create",
   UPDATE: "update",
