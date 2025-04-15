@@ -54,3 +54,13 @@ import { fetchAllPaymentDatasetAction } from "./paymentActions";
 const paymentSlice = createCRUDSlice("paymentDataset", fetchAllPaymentDatasetAction);
 
 export const paymentReducer = paymentSlice.reducer;
+
+
+
+// constants.js
+export const CRUD_MODES = {
+  CREATE: "create",
+  UPDATE: "update",
+  DELETE: "delete",
+};
+
