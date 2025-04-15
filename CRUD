@@ -72,3 +72,14 @@ export const CRUD_MODES = {
     default:
       throw new Error("Unsupported CRUD mode: " + mode);
   }
+
+// store/common/createCrudActions.js
+import { createCRUDThunk } from "./crudActions";
+
+export function generateCRUDActions(moduleName, apiMap) {
+  return {
+    create: createCRUDThunk(`${moduleName}/create`, apiMap.create),
+    update: createCRUDThunk(`${moduleName}/update`, apiMap.update),
+    delete: createCRUDThunk(`${moduleName}/delete`, apiMap.delete),
+  };
+}
