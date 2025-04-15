@@ -45,3 +45,12 @@ export const createCommonSlice = (name, asyncThunk) => {
     },
   });
 };
+
+
+// store/payment/paymentSlice.js
+import { createCRUDSlice } from "../common/crudSlice";
+import { fetchAllPaymentDatasetAction } from "./paymentActions";
+
+const paymentSlice = createCRUDSlice("paymentDataset", fetchAllPaymentDatasetAction);
+
+export const paymentReducer = paymentSlice.reducer;
