@@ -1,1 +1,13 @@
 
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
+export function createCRUDThunk(actionType, apiFunc) {
+  return createAsyncThunk(actionType, async (payload, thunkAPI) => {
+    try {
+      const response = await apiFunc(payload);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message || "Unknown error");
+    }
+  });
+}
