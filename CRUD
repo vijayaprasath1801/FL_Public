@@ -83,3 +83,10 @@ export function generateCRUDActions(moduleName, apiMap) {
     delete: createCRUDThunk(`${moduleName}/delete`, apiMap.delete),
   };
 }
+
+
+export const paymentActions = generateCRUDActions("payments", {
+  create: createPaymentAPI,
+  update: updatePaymentAPI,
+  delete: deletePaymentAPI,
+});
