@@ -12,6 +12,22 @@ const ButtonBar = ({actions , disabled , fileRef}) => {
     const visibleButtons = buttonConfig.filter(
         (button) => button.action !== undefined
     );
+
+   const buttonsConfig = {
+  add: {
+    action: () => openPanel("Add"),
+    disabled: () => false,
+  },
+  delete: {
+    action: openDeletePopup,
+    disabled: (rows: any[]) => rows.length === 0,
+  },
+  modify: {
+    action: () => openPanel("Modify"),
+    disabled: (rows: any[]) => rows.length !== 1,
+  },
+};
+
  
     return (
         <>
