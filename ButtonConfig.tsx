@@ -13,6 +13,13 @@ const ButtonBar = ({actions , disabled , fileRef}) => {
         (button) => button.action !== undefined
     );
 
+      const buttonMeta = buttonKeys[btn.key];
+        const isDisabled =
+          disabled ||
+          (typeof buttonMeta?.disabled === "function"
+            ? buttonMeta.disabled(context)
+            : buttonMeta?.disabled);
+
    const buttonsConfig = {
   add: {
     action: () => openPanel("Add"),
