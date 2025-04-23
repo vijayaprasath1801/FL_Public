@@ -1,13 +1,9 @@
-const isSelected = (item, groupRoute, currentPath, isGroupOpen) => {
-  // If it's a leaf item with a route
-  if (item?.route && item.route === currentPath) {
-    return true;
-  }
-
-  // If the group is open and its route matches
-  if (isGroupOpen && groupRoute && groupRoute === currentPath) {
-    return true;
-  }
-
-  return false;
+const isSelected = (itemRoute, currentPath) => {
+  return itemRoute === currentPath;
 };
+
+  const isParentSelected =
+      isSelected(item.route, window.location.pathname) ||
+      item.megaMenu?.some((group) =>
+        group.items.some((subItem) => isSelected(subItem.route, window.location.pathname))
+      );
