@@ -1,0 +1,13 @@
+const isSelected = (item, groupRoute, currentPath, isGroupOpen) => {
+  // If it's a leaf item with a route
+  if (item?.route && item.route === currentPath) {
+    return true;
+  }
+
+  // If the group is open and its route matches
+  if (isGroupOpen && groupRoute && groupRoute === currentPath) {
+    return true;
+  }
+
+  return false;
+};
