@@ -90,3 +90,14 @@ export const paymentActions = generateCRUDActions("payments", {
   update: updatePaymentAPI,
   delete: deletePaymentAPI,
 });
+
+
+export const getAllTableData = createCRUDThunk('table/getAll', getAllData);
+
+// This creates an async thunk named 'table/getAll' using the getAllData API function.
+// You can dispatch this thunk and pass a payload like:
+// dispatch(getAllTableData(payload))
+// The payload will be forwarded to the getAllData function.
+// For example, if getAllData expects a filter or params object, pass it when dispatching:
+// dispatch(getAllTableData({ page: 1, size: 10 }))
+
