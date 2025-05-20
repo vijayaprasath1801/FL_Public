@@ -1,0 +1,52 @@
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialState = {
+  data: null,
+  loading: false,
+  error: null,
+};
+
+export function createCRUDSlice(name, crudThunks) {
+  return createSlice({
+    name,
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+      for (const [key, thunk] of Object.entries(crudThunks)) {
+        builder
+          .addCase(thunk.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(thunk.fulfilled, (state, action) => {
+            state.loading = false;
+            // You can customize data handling depending on action type (e.g. add, update, delete)
+            // For example:
+            if (key === 'fetchAll') {
+              state.data = action.payload;
+            } else if (key === 'create') {
+              if (Array.isArray(state.data)) {
+                state.data.push(action.payload);
+              } else {
+                state.data = [action.payload];
+              }
+            } else if (key === 'update') {
+              if (Array.isArray(state.data)) {
+                state.data = state.data.map(item =>
+                  item.id === action.payload.id ? action.payload : item
+                );
+              }
+            } else if (key === 'delete') {
+              if (Array.isArray(state.data)) {
+                state.data = state.data.filter(item => item.id !== action.meta.arg);
+              }
+            }
+          })
+          .addCase(thunk.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message || "Something went wrong";
+          });
+      }
+    },
+  });
+}
