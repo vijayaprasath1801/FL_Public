@@ -20,8 +20,6 @@ export function createCRUDSlice(name, crudThunks) {
           })
           .addCase(thunk.fulfilled, (state, action) => {
             state.loading = false;
-            // You can customize data handling depending on action type (e.g. add, update, delete)
-            // For example:
             if (key === 'fetchAll') {
               state.data = action.payload;
             } else if (key === 'create') {
