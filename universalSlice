@@ -1,0 +1,69 @@
+import { createSlice, isPending, isFulfilled, isRejected } from "@reduxjs/toolkit";
+
+const initialState = {};
+
+export const createUniversalSlice = (sliceName, { asyncThunks = {}, useMatchers = false } = {}) => {
+  return createSlice({
+    name: sliceName,
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+      // Handle specific named thunks if provided
+      Object.entries(asyncThunks).forEach(([key, thunk]) => {
+        builder
+          .addCase(thunk.pending, (state) => {
+            state[key] = {
+              ...(state[key] || {}),
+              loading: true,
+              error: null,
+            };
+          })
+          .addCase(thunk.fulfilled, (state, action) => {
+            state[key] = {
+              ...(state[key] || {}),
+              loading: false,
+              data: action.payload,
+              error: null,
+            };
+          })
+          .addCase(thunk.rejected, (state, action) => {
+            state[key] = {
+              ...(state[key] || {}),
+              loading: false,
+              error: action.payload || action.error?.message || "Unknown error",
+            };
+          });
+      });
+
+      // Optionally handle matchers for all async thunks (useful for CRUD)
+      if (useMatchers) {
+        builder
+          .addMatcher(isPending, (state, action) => {
+            const module = action.type.split("/")[0];
+            state[module] = {
+              ...(state[module] || {}),
+              loading: true,
+              error: null,
+            };
+          })
+          .addMatcher(isFulfilled, (state, action) => {
+            const module = action.type.split("/")[0];
+            state[module] = {
+              ...(state[module] || {}),
+              loading: false,
+              data: action.payload,
+              error: null,
+            };
+          })
+          .addMatcher(isRejected, (state, action) => {
+            const module = action.type.split("/")[0];
+            state[module] = {
+              ...(state[module] || {}),
+              loading: false,
+              error: action.payload || action.error?.message || "Unknown error",
+            };
+          });
+      }
+    },
+  });
+};
