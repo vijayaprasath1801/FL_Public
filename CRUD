@@ -101,3 +101,14 @@ export const getAllTableData = createCRUDThunk('table/getAll', getAllData);
 // For example, if getAllData expects a filter or params object, pass it when dispatching:
 // dispatch(getAllTableData({ page: 1, size: 10 }))
 
+
+useEffect(() => {
+  dispatch(paymentActions.fetchAll())
+    .unwrap()
+    .then((data) => {
+      setPayments(data); // If you're storing locally too
+    })
+    .catch((err) => {
+      console.error("Failed to fetch payments", err);
+    });
+}, []);
