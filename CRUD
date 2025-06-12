@@ -102,13 +102,15 @@ export const getAllTableData = createCRUDThunk('table/getAll', getAllData);
 // dispatch(getAllTableData({ page: 1, size: 10 }))
 
 
+`
 useEffect(() => {
-  dispatch(paymentActions.fetchAll())
+  dispatch(action.fetchAll())
     .unwrap()
     .then((data) => {
-      setPayments(data); // If you're storing locally too
+      setData(data); 
     })
     .catch((err) => {
       console.error("Failed to fetch payments", err);
     });
-}, []);
+}, [config]);
+`
