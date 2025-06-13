@@ -41,3 +41,16 @@ export const createMockThunk = (type, mockData) => {
 
 // Usage
 dispatch(createMockThunk("common/dropdowns", { mock: "yes" }));
+
+
+const USE_MOCKS = true;
+
+const mockGetDropdownAPI = async () => {
+  return {
+    bloodGroups: ["A+", "B+", "O-"],
+    states: ["TN", "MH"],
+  };
+};
+
+// Use mock or real API dynamically
+const getDropdownAPIToUse = USE_MOCKS ? mockGetDropdownAPI : getDropdownAPI;
