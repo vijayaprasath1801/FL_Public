@@ -19,3 +19,7 @@ useEffect(() => {
     payload: mockData,
   });
 }, []);
+
+// commonSelectors.ts
+export const selectCommonModule = (state, moduleKey) =>
+  state.COMMON?.[moduleKey] || {};
