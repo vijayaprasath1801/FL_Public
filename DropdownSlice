@@ -137,3 +137,7 @@ error: action.payload || action.error?.message || "Unknown error",
 });
 },
 });
+
+
+const module = `${action.type.split("/")[0]}/${action.type.split("/")[1]}`;
+
