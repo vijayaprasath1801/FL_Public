@@ -23,3 +23,6 @@ useEffect(() => {
 // commonSelectors.ts
 export const selectCommonModule = (state, moduleKey) =>
   state.COMMON?.[moduleKey] || {};
+
+const dropdownState = useSelector((state) => selectCommonModule(state, "common/dropdowns"));
+const allDataState = useSelector((state) => selectCommonModule(state, "common/all"));
