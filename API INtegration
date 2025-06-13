@@ -1,0 +1,2 @@
+const dropdowns = useSelector((state) => getCommonState(state)?.dropdowns?.data || {});
+
