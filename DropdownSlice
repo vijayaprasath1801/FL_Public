@@ -1,0 +1,139 @@
+const initialState = {};
+export const createCommonslice = () => {
+return createSlice({
+name: "COMMON",
+initialstate,
+reducers: {},
+extraReducers: (builder) => {
+builder
+.addMatcher (isPending, (state, action) => {
+const module = action.type.split("/")[0];
+state[module] = {
+...(state[module] || ()),
+loading: true,
+error: null,
+};
+})
+.addMatcher (isFulfilled, (state, action) => {
+const module = action.type.split("/")[0];
+state[module] = { loading: false,
+...(state[module] || ()),
+data: action.payload,
+error: null,
+};
+})
+.addMatcher(isRejected, (state, action) => {
+const module action.type.split("/")[0];
+state[module] =
+...(state[module] || (),
+loading: false,
+error: action.payload || action.error?.message || "Unknown error",
+};
+});
+
+
+import { createCommonSlice } from "../slices/CommonSlice";
+export const COMMON_FEATURE_KEY = "COMMON";
+const CommonSlice = createCommonSlice();
+export const CommonActions = CommonSlice.actions;
+export const CommonReducer = CommonSlice.reducer;
+export const getCommonState = (rootState) => rootState [COMMON_FEATURE_KEY];
+
+
+
+import { getBaseURL } from "../utils"
+import { apicall } from "./api.service";
+export const getDropdownAPI = (data) => {
+const url = ${getBaseURL()}/epe_utem_core/utem/configData;
+return apiCall (url, "GET");
+}
+
+import { getDropdownAPI } from "../service/common.service";
+import { createCommonActions } from "./createCommonActions";
+export const CommonAPIActions = createCommonActions("common", {
+fetchDropDowns: getDropdownAPI, // for all dropdowns.
+// add more common actions as needed
+});
+
+import { createCommon Thunk } from "./commonThunk";
+export function createCommonActions (moduleName, apiMap) {
+return {
+create: createCommon Thunk(${moduleName}/create', apiMap.create),
+update: createCommon Thunk(${moduleName}/update, apiMap.update),
+delete: createCommon Thunk(${moduleName}/delete, apiMap.delete),
+fetchAll: createCommon Thunk(${moduleName}/all, apiMap.fetchAll),
+fetchDropDowns: createCommon Thunk(${moduleName}/dropdowns, apiMap.fetchDropDowns),
+// add common actions as needed
+};
+
+
+import { createAsyncThunk } from "@reduxjs/toolkit";
+export function createCommon Thunk(actionType, apiFunc) {
+return createAsyncThunk(actionType, async (payload, thunkAPI) => {
+try {
+const response = await apiFunc(payload);
+return response;
+} catch (error) {
+return thunkAPI.rejectWithValue(error.message || "Unknown error");
+}
+});
+};
+
+
+export const fetchDatasourceAction = createCommonThunk("datasource", getDatasourceAPI);
+export const dataSourceCRUDActions = createCommonActions("datasourcecrud", {
+create: createDatasourceAPI,
+update: updateDatasourceAPI,
+delete: deleteDatasourceAPI,
+fetchAll: getAllDatasourceAPI,
+}) ;
+
+
+import { fetchDatasourceAction } from "../../actions/dataSources.actions";
+import { createComponentDataSlice } from "../slices/componentDataSlice";
+export const DATA_SOURCE_FEATURE_KEY = "datasource";
+const dataSourceSlice = createComponentDataSlice(DATA_SOURCE_FEATURE_KEY, {
+asyncThunks : {
+fetchDataSource: fetchDatasourceAction,
+}
+});
+export const dataSourceActions = dataSourceSlice.actions;
+export const dataSourceReducer = dataSourceSlice.reducer;
+export const getDataSourceState = (rootState) => rootState [DATA_SOURCE_FEATURE_KEY];
+
+const initialState = {};
+export const createComponentDataSlice = (sliceName, { asyncThunks = {}} = {}) => {
+return createslice({
+name: sliceName,
+initialstate,
+reducers: {},
+extraReducers: (builder) => {
+// Handle specific named thunks if provided
+Object.entries (asyncThunks).forEach(([key, thunk]) => {
+builder
+.addCase (thunk.pending, (state) => {
+state[key] = {
+...(state[key] || []),
+loading: true,
+error: null,
+};
+I
+})
+.addCase (thunk. fulfilled, (state, action) => {
+state[key] = {
+...(state[key] || {}),
+loading: false,
+data: action.payload,
+error: null,
+};
+})
+.addCase(thunk.rejected, (state, action) => {
+state[key] = {
+...(state[key] || {}),
+loading: false,
+error: action.payload || action.error?.message || "Unknown error",
+};
+});
+});
+},
+});
