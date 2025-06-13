@@ -1,2 +1,21 @@
 const dropdowns = useSelector((state) => getCommonState(state)?.dropdowns?.data || {});
 
+const mockData = {
+  appId: [
+    { label: "App One", value: "app1" },
+    { label: "App Two", value: "app2" },
+  ],
+  countryList: [
+    { label: "India", value: "IN" },
+    { label: "USA", value: "US" },
+  ],
+};
+
+useEffect(() => {
+  const dispatch = useDispatch();
+
+  dispatch({
+    type: "common/dropdowns/fulfilled", // Must match your fulfilled action type
+    payload: mockData,
+  });
+}, []);
