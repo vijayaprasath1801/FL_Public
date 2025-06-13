@@ -29,3 +29,15 @@ const allDataState = useSelector((state) => selectCommonModule(state, "common/al
 export const mockGetDropdownAPI = jest.fn().mockResolvedValue(mockData);
 
 export const mockGetDropdownAPI = jest.fn().mockResolvedValue(mockData);
+
+
+export const createMockThunk = (type, mockData) => {
+  return () => (dispatch) =>
+    dispatch({
+      type: `${type}/fulfilled`,
+      payload: mockData,
+    });
+};
+
+// Usage
+dispatch(createMockThunk("common/dropdowns", { mock: "yes" }));
