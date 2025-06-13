@@ -26,3 +26,6 @@ export const selectCommonModule = (state, moduleKey) =>
 
 const dropdownState = useSelector((state) => selectCommonModule(state, "common/dropdowns"));
 const allDataState = useSelector((state) => selectCommonModule(state, "common/all"));
+export const mockGetDropdownAPI = jest.fn().mockResolvedValue(mockData);
+
+export const mockGetDropdownAPI = jest.fn().mockResolvedValue(mockData);
